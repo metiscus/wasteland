@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <string>
 #include <vector>
 
 enum TileType
@@ -31,7 +32,7 @@ private:
 
 public:
     Map();
-    static std::shared_ptr<Map> Load(const char* filename);
+    static std::shared_ptr<Map> Load(const std::string& filename);
     void Save(const char* filename) const;
     
     const MapTile& Get(uint32_t x, uint32_t y) const;

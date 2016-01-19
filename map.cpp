@@ -1,4 +1,5 @@
 #include "map.hpp"
+#include <iostream>
 #include <fstream>
 
 struct MapData
@@ -17,10 +18,10 @@ Map::Map()
 {
 }
 
-std::shared_ptr<Map> Map::Load(const char* filename)
+std::shared_ptr<Map> Map::Load(const std::string& filename)
 {
     auto ret = std::make_shared<Map>();
-    std::ifstream infile(filename);
+    std::ifstream infile(filename.c_str());
     if(infile.is_open())
     {
         infile>>ret->data_->width;
@@ -31,6 +32,11 @@ std::shared_ptr<Map> Map::Load(const char* filename)
         {
             infile>>type;
             ret->data_->tiles[ii].type = (TileType)type;
+            if((TileType)type >= tile_Count)
+            {
+                std::cerr<<"Saw an invalid tile type "<<type<<"\n";
+            }
+
             infile>>visited;
             ret->data_->tiles[ii].visited = visited;
         }

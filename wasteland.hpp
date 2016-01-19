@@ -3,6 +3,8 @@
 
 #include "map.hpp"
 #include <SFML/Graphics.hpp>
+#include <string>
+#include <unordered_map>
 
 class Character;
 
@@ -13,11 +15,17 @@ private:
     std::unique_ptr<sf::RenderWindow> window_;
 
     bool should_quit_;
+    
+    std::unordered_map<uint32_t, std::shared_ptr<sf::Sprite> > sprites_;
+    
+    std::unordered_map<uint32_t, std::shared_ptr<sf::Texture> > textures_;
+
 public:
     Wasteland();
     
     void Run();
     void Draw();
+    void LoadMap(const std::string& filename);
 };
 
 #endif
