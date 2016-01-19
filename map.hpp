@@ -25,10 +25,9 @@ class Map
 {
 private:
     std::unique_ptr<MapData> data_;
-    
-    Map();
 
 public:
+    Map();
     static std::shared_ptr<Map> Load(const char* filename);
     void Save(const char* filename) const;
     
