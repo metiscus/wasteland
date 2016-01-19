@@ -1,9 +1,14 @@
 #include "wasteland.hpp"
+#include "character.hpp"
 
+#include <SFML/Window.hpp>
+
+#include <iostream>
 #include <cstdio>
 
 Wasteland::Wasteland()
     : should_quit_(false)
+    , player_(new Character())
 {
     window_ = std::make_unique<sf::RenderWindow>(sf::VideoMode(800, 600), "Wasteland");
     
@@ -42,6 +47,8 @@ Wasteland::Wasteland()
     greens->setTexture(*green);
     greens->setScale(sf::Vector2f(32.0f, 32.0f));
     sprites_[1] = greens;
+    
+    player_->SetPosition(sf::Vector2f(5.0, 5.0));
 }
 
 void Wasteland::Run()
@@ -54,6 +61,17 @@ void Wasteland::Run()
             if (event.type == sf::Event::Closed)
             {
                 should_quit_ = true;
+            }
+            
+            if (event.type == sf::Event::KeyPressed)
+            {
+                switch(event.key.code)
+                {
+                    
+                    case sf::Keyboard::A:
+                        player_->Move(sf::Vector2f(-1.0, 0.0));
+                        break;
+                }
             }
         }
         
@@ -85,6 +103,9 @@ void Wasteland::Draw()
             }
         }
     }
+    
+    sprites_[0]->setPosition(player_->GetPosition() * 32.0f);
+    window_->draw(*sprites_[0]);
     
     window_->display();
 }

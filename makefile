@@ -11,6 +11,7 @@ default: wasteland
 
 SRC:=\
 	wasteland.cpp\
+	character.cpp\
 	map.cpp\
 	utility.cpp\
 

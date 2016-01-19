@@ -25,7 +25,7 @@ struct MapTile
 
 struct MapData;
 
-class Map
+class Map final
 {
 private:
     std::unique_ptr<MapData> data_;

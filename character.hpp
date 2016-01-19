@@ -4,6 +4,8 @@
 #include <memory>
 #include <string>
 
+#include <SFML/Graphics.hpp>
+
 struct CharacterData;
 
 class Character
@@ -12,6 +14,7 @@ class Character
     
 public:
     Character();
+    ~Character();
     
     const std::string&  GetName() const;
     const sf::Vector2f& GetPosition() const;
@@ -19,6 +22,15 @@ public:
     uint32_t GetHealth() const;
     uint32_t GetMaxHealth() const;
     uint32_t GetRadiation() const;
+
+    void Move(const sf::Vector2f& vec);
+
+    void SetName(const std::string& name);
+    void SetPosition(const sf::Vector2f& vec);
+    void SetFacing(const sf::Vector2f& vec);
+    void SetHealth(uint32_t health);
+    void SetMaxHealth(uint32_t max);
+    void SetRadiation(uint32_t rad);
 };
 
 

@@ -20,6 +20,7 @@ struct ObjectData;
 
 class Object
 {
+private:
     std::unique_ptr<ObjectData> data_;
     
 public:
