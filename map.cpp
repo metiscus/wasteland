@@ -45,27 +45,33 @@ void Map::Save(const char* filename) const
     std::ofstream outfile(filename);
     if(outfile.is_open())
     {
-        outfile<<data_->width;
-        
+        outfile<<data_->width<<" ";
+        outfile<<data_->height<<" ";
+        uint32_t out;
+        for(uint32_t ii=0; ii<data_->width*data_->height; ++ii)
+        {
+            outfile<<data_->tiles[ii].type;
+            outfile<<data_->tiles[ii].visited;
+        }
     }
 }
     
 const MapTile& Map::Get(uint32_t x, uint32_t y) const
 {
-    
+    return data_->tiles[x+y*data_->width];
 }
 
 MapTile& Map::Get(uint32_t x, uint32_t y)
 {
-    
+    return data_->tiles[x+y*data_->width];
 }
 
 uint32_t Map::GetWidth() const
 {
-    
+    return data_->width;
 }
 
 uint32_t Map::GetHeight() const
 {
-    
+    return data_->height;
 }
