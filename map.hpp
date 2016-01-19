@@ -1,3 +1,6 @@
+#ifndef MAP_HPP_INCLUDED
+#define MAP_HPP_INCLUDED
+
 #include <cstdint>
 #include <memory>
 #include <vector>
@@ -37,3 +40,5 @@ public:
     uint32_t GetWidth() const;
     uint32_t GetHeight() const;
 };
+
+#endif

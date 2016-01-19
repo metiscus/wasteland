@@ -47,7 +47,6 @@ void Map::Save(const char* filename) const
     {
         outfile<<data_->width<<" ";
         outfile<<data_->height<<" ";
-        uint32_t out;
         for(uint32_t ii=0; ii<data_->width*data_->height; ++ii)
         {
             outfile<<data_->tiles[ii].type;

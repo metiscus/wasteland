@@ -1,14 +1,18 @@
 CXX=g++
-CXXFLAGS=-g -Wall -Wextra --std=gnu++11
+CXXFLAGS=-g -Wall -Wextra --std=gnu++14
 LDFLAGS=
 
 .POSIX:
+
+SFML_LDFLAGS:=-lsfml-system -lsfml-window -lsfml-graphics
+CXXFLAGS += $(SFML_LDFLAGS)
 
 default: wasteland
 
 SRC:=\
 	wasteland.cpp\
 	map.cpp\
+	utility.cpp\
 
 OBJ:=$(SRC:.cpp=.o)
 
