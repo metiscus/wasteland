@@ -3,6 +3,14 @@
 #include <iostream>
 #include <fstream>
 
+MapTile::MapTile()
+{
+    type      = tile_Invalid;
+    visited   = false;
+    passable  = false;
+    radiation = 0.0f;
+}
+
 std::shared_ptr<Map> Map::Load(const std::string& filename)
 {
     auto ret = std::make_shared<Map>();
@@ -175,6 +183,16 @@ bool Map::IsOpaque(uint32_t x, uint32_t y) const
         }
     }
     return true;
+}
+
+float Map::GetRadiation(uint32_t x, uint32_t y) const
+{
+    return tiles[x+y*width].radiation;
+}
+
+void Map::SetRadiation(uint32_t x, uint32_t y, float radiation)
+{
+    tiles[x+y*width].radiation = radiation;
 }
 
 void Map::Save(const char* filename) const

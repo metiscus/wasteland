@@ -15,21 +15,21 @@ Wasteland::Wasteland()
     
     auto red = std::make_shared<sf::Texture>();
     red->create(1,1);
-    uint8_t red_b[] = { 255, 0, 0, 255 };
+    uint8_t red_b[] = { 255, 100, 100, 255 };
     red->update(red_b);
     red->setRepeated(true);
     textures_[0] = red;
 
     auto green = std::make_shared<sf::Texture>();
     green->create(1,1);
-    uint8_t green_b[] = { 0, 255, 0, 255 };
+    uint8_t green_b[] = { 100, 255, 100, 255 };
     green->update(green_b);
     green->setRepeated(true);
     textures_[1] = green;
     
     auto blue = std::make_shared<sf::Texture>();
     blue->create(1,1);
-    uint8_t blue_b[] = { 0, 0, 255, 255 };
+    uint8_t blue_b[] = { 200, 200, 200, 255 };
     blue->update(blue_b);
     blue->setRepeated(true);
     textures_[2] = blue;
@@ -55,6 +55,8 @@ Wasteland::Wasteland()
     window_->setView(view_);
     
     zoom_ = 1.0f;
+    
+    font_.loadFromFile("data/font.ttf");
     
     auto knife = Object::BuildFromString(std::string("4,1,10,1,Combat Knife"));
     std::cerr<<knife->ToString()<<"\n";
@@ -132,6 +134,8 @@ void Wasteland::Draw()
 
     window_->clear(sf::Color::Black);
     
+    window_->setView(view_);
+    
     if(map_)
     {
         UpdateVisited();
@@ -152,7 +156,7 @@ void Wasteland::Draw()
                     else
                     {
                         sprite->setColor(sf::Color(255,255,255));
-                    }    
+                    }
                     window_->draw(*sprites_[(uint32_t)tile.type]);
                 }
             }
@@ -162,7 +166,14 @@ void Wasteland::Draw()
     sprites_[0]->setPosition(player_->GetPosition() * 32.0f);
     window_->draw(*sprites_[0]);
     
-    window_->setView(view_);
+    window_->setView(text_view_);
+    char buffer[1000];
+    sprintf(buffer, "Position: (%10d, %10d)", 
+        (uint32_t)player_->GetPosition().x,
+        (uint32_t)player_->GetPosition().y );
+    sf::Text position(buffer, font_);
+    position.setCharacterSize(20);
+    window_->draw(position);
     
     window_->display();
 }
@@ -210,8 +221,6 @@ void Wasteland::HandlePlayerMovement(PlayerMovement action)
     
     player_->SetPosition(move_to_pos);
     view_.setCenter(move_to_pos * 32.0f);
-    
-    //UpdateVisited();
 }
 
 void Wasteland::UpdateVisited()
@@ -228,6 +237,17 @@ void Wasteland::LoadMap(const std::string& filename)
 void Wasteland::LoadMap(std::shared_ptr<sf::Image> img)
 {
     map_ = Map::Load(img);
+    
+    //testing
+    map_->SetRadiation(10, 10, 0.5);
+    map_->SetRadiation(11, 10, 0.25);
+    map_->SetRadiation(12, 10, 0.1);
+    map_->SetRadiation(10, 11, 0.5);
+    map_->SetRadiation(11, 11, 0.25);
+    map_->SetRadiation(12, 11, 0.1);
+    map_->SetRadiation(10, 9, 0.5);
+    map_->SetRadiation(11, 9, 0.25);
+    map_->SetRadiation(12, 9, 0.1);
 }
 
 int main(int argc, char** argv)

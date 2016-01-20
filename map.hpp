@@ -22,10 +22,12 @@ enum TileType
 
 struct MapTile
 {
+    MapTile();
     TileType type;
     bool visited;
     bool passable;
     std::vector<ObjectPtr> objects;
+    float radiation;
 };
 
 class Map final
@@ -48,6 +50,7 @@ public:
     MapTile& Get(uint32_t x, uint32_t y);
     
     bool GetLit(uint32_t x, uint32_t y) const;
+    float GetRadiation(uint32_t x, uint32_t y) const;
     
     bool OnMap(uint32_t x, uint32_t y) const;
     
@@ -56,6 +59,7 @@ public:
     
     void UpdateLighting(uint32_t x, uint32_t y, uint32_t radius);
     void SetLit(uint32_t x, uint32_t y, bool lit);
+    void SetRadiation(uint32_t x, uint32_t y, float radiation);
     
     bool IsPassable(uint32_t x, uint32_t y) const;
     bool IsOpaque(uint32_t x, uint32_t y) const;

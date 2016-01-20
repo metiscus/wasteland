@@ -35,6 +35,8 @@ private:
     std::unique_ptr<Character> player_;
     
     sf::View view_;
+    sf::View text_view_;
+    sf::Font font_;
     
     float zoom_;
 
