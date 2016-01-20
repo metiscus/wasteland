@@ -53,6 +53,7 @@ private:
     void HandlePlayerMovement(PlayerMovement action);
     void UpdateVisited();
     std::string GetStatusLine();
+    void UpdateMap();
 };
 
 #endif

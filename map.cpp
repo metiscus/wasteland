@@ -1,4 +1,5 @@
 #include "map.hpp"
+#include <algorithm>
 #include <cassert>
 #include <iostream>
 #include <fstream>
@@ -259,4 +260,19 @@ void Map::UpdateLighting(uint32_t x, uint32_t y, uint32_t radius)
     }
 
     fov_circle(&fov_settings, this, NULL, x, y, radius);
+}
+
+std::list<CharacterPtr>& Map::GetCharacters()
+{
+    return characters;
+}
+
+void Map::AddCharacter(CharacterPtr ptr)
+{
+    characters.push_back(ptr);
+}
+
+void Map::RemoveCharacter(CharacterPtr ptr)
+{
+    characters.erase(std::remove(characters.begin(), characters.end(), ptr), characters.end());
 }

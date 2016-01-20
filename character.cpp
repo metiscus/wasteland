@@ -1,10 +1,5 @@
 #include "character.hpp"
 
-struct CharacterData
-{
-
-};
-
 static const uint32_t MaxInventoryWeightPerStrength = 10;
 
 Character::Character()
@@ -15,6 +10,9 @@ Character::Character()
     radiation = 0;
     name = std::string("(invalid character)");
     inventory_weight = 0;
+    
+    traits.can_swim = 1;
+    traits.needs_food = 1;
 }
 
 Character::~Character()
@@ -52,6 +50,11 @@ uint32_t Character::GetRadiation() const
     return radiation;
 }
 
+CharacterTraits Character::GetTraits() const
+{
+    return traits;
+}
+
 void Character::Move(const sf::Vector2f& vec)
 {
     SetPosition(GetPosition() + vec);
@@ -85,6 +88,11 @@ void Character::SetMaxHealth(uint32_t max)
 void Character::SetRadiation(uint32_t rad)
 {
     radiation = rad;
+}
+
+void Character::SetTraits(const CharacterTraits& traits)
+{
+    this->traits = traits;
 }
 
 bool Character::AddInventoryItem(std::shared_ptr<Object> object)

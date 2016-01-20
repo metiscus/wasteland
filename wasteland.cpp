@@ -121,7 +121,8 @@ void Wasteland::Run()
                 }
             }
         }
-        
+
+        UpdateMap();
         Draw();
     }
     
@@ -163,6 +164,9 @@ void Wasteland::Draw()
             }
         }
     }
+    
+    //TODO: draw characters from map as well
+    //TODO: draw projectiles from world
     
     sprites_[0]->setPosition(player_->GetPosition() * 32.0f);
     window_->draw(*sprites_[0]);
@@ -220,6 +224,18 @@ void Wasteland::HandlePlayerMovement(PlayerMovement action)
     
     player_->SetPosition(move_to_pos);
     view_.setCenter(move_to_pos * 32.0f);
+}
+
+void Wasteland::UpdateMap()
+{
+    if(map_)
+    {
+        auto characters = map_->GetCharacters();
+        for(auto chr : characters)
+        {
+            
+        }
+    }
 }
 
 void Wasteland::UpdateVisited()

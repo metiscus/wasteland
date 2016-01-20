@@ -1,11 +1,13 @@
 #ifndef MAP_HPP_INCLUDED
 #define MAP_HPP_INCLUDED
 
+#include "character.hpp"
 #include <cstdint>
 #include <memory>
 #include <string>
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <list>
 #include "fov.h"
 #include "object.hpp"
 
@@ -37,6 +39,7 @@ private:
     uint32_t height;
     std::vector<MapTile> tiles;
     std::vector<bool> lit;
+    std::list<CharacterPtr> characters;
 
     fov_settings_type fov_settings;
 public:
@@ -63,6 +66,11 @@ public:
     
     bool IsPassable(uint32_t x, uint32_t y) const;
     bool IsOpaque(uint32_t x, uint32_t y) const;
+
+    std::list<CharacterPtr>& GetCharacters();
+    
+    void AddCharacter(CharacterPtr ptr);
+    void RemoveCharacter(CharacterPtr ptr);
 };
 
 #endif
