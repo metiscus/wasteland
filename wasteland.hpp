@@ -38,6 +38,7 @@ public:
     
 private:
     void HandlePlayerMovement(PlayerMovement action);
+    void UpdateVisited();
 };
 
 #endif

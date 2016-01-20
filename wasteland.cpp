@@ -161,6 +161,37 @@ void Wasteland::HandlePlayerMovement(PlayerMovement action)
     }
     
     player_->SetPosition(move_to_pos);
+    
+    UpdateVisited();
+}
+
+void Wasteland::UpdateVisited()
+{
+    //TODO: implement a roguelike lighting algorithm here
+    auto pos = player_->GetPosition();
+    if(pos.x-1 >= 0)
+    {
+        auto &tile = map_->Get(pos.x-1, pos.y);
+        tile.visited = true;
+    }
+    
+    if(pos.y-1 >= 0)
+    {
+        auto &tile = map_->Get(pos.x, pos.y-1);
+        tile.visited = true;
+    }
+    
+    if(pos.x+1<map_->GetWidth())
+    {
+        auto &tile = map_->Get(pos.x+1, pos.y);
+        tile.visited = true;
+    }
+    
+    if(pos.y+1<map_->GetHeight())
+    {
+        auto &tile = map_->Get(pos.x, pos.y+1);
+        tile.visited = true;
+    }
 }
 
 void Wasteland::LoadMap(const std::string& filename)
