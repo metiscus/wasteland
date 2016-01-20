@@ -80,13 +80,11 @@ std::shared_ptr<Map> Map::Load(std::shared_ptr<sf::Image> img)
                 case tile_Ground:
                 case tile_Empty:
                     ret->tiles[xx+yy*size.x].passable = true;
-                    std::cerr<<"beep\n";
                     break;
 
                 case tile_Wall:
                 case tile_Water:
                     ret->tiles[xx+yy*size.x].passable = false;
-                    std::cerr<<"boop\n";
                     break;
                     
                 default:
