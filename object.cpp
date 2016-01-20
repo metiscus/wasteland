@@ -35,16 +35,19 @@ std::shared_ptr<Object> Object::BuildFromString(const std::string& str)
         ss>>tmp;
         ret->data_->type = (ObjectType)tmp;
 
+        ss.clear();
         ss<<tokens[1];
         ss>>ret->data_->uid;
         
+        ss.clear();
         ss<<tokens[2];
         ss>>ret->data_->weight;
 
+        ss.clear();
         ss<<tokens[3];
         ss>>ret->data_->quantity;
         
-         ret->data_->name = tokens[4];
+        ret->data_->name = tokens[4];
     }
     
     return ret;
@@ -52,7 +55,10 @@ std::shared_ptr<Object> Object::BuildFromString(const std::string& str)
 
 std::string Object::ToString() const
 {
-    return std::string("");
+    std::stringstream ss;
+    ss<<data_->type<<","<<data_->uid<<","<<data_->weight<<","<<data_->quantity<<","<<data_->name;
+
+    return ss.str();
 }
 
 uint32_t Object::GetUID() const

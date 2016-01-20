@@ -52,6 +52,7 @@ Wasteland::Wasteland()
     player_->SetPosition(sf::Vector2f(5.0, 5.0));
     
     auto knife = Object::BuildFromString(std::string("4,1,10,1,Combat Knife"));
+    std::cerr<<knife->ToString()<<"\n";
     player_->AddInventoryItem(knife);
 }
 
@@ -84,9 +85,9 @@ void Wasteland::Run()
                         player_->Move(sf::Vector2f(0.0, -1.0));
                         break;
                     default:
-                        {
-                            
-                        }
+                    {
+
+                    }
                 }
             }
         }
