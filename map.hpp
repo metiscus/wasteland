@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <memory>
 #include <string>
+#include <SFML/Graphics.hpp>
 #include <vector>
 #include "fov.h"
 
@@ -37,6 +38,7 @@ private:
 public:
     Map();
     ~Map();
+    static std::shared_ptr<Map> Load(std::shared_ptr<sf::Image> img);
     static std::shared_ptr<Map> Load(const std::string& filename);
     void Save(const char* filename) const;
     

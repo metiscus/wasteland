@@ -49,7 +49,7 @@ Wasteland::Wasteland()
     greens->setScale(sf::Vector2f(32.0f, 32.0f));
     sprites_[1] = greens;
     
-    player_->SetPosition(sf::Vector2f(5.0, 5.0));
+    player_->SetPosition(sf::Vector2f(1.0, 1.0));
     
     auto knife = Object::BuildFromString(std::string("4,1,10,1,Combat Knife"));
     std::cerr<<knife->ToString()<<"\n";
@@ -185,10 +185,18 @@ void Wasteland::LoadMap(const std::string& filename)
     map_ = Map::Load(filename);
 }
 
+void Wasteland::LoadMap(std::shared_ptr<sf::Image> img)
+{
+    map_ = Map::Load(img);
+}
+
 int main(int argc, char** argv)
 {
     std::unique_ptr<Wasteland> game(new Wasteland());
-    game->LoadMap("data/test.map");
+    //game->LoadMap("data/test.map");
+    auto mapImg = std::make_shared<sf::Image>();
+    mapImg->loadFromFile("data/map.png");
+    game->LoadMap(mapImg);
     game->Run();
     return 0;
 }

@@ -35,6 +35,7 @@ public:
     void Run();
     void Draw();
     void LoadMap(const std::string& filename);
+    void LoadMap(std::shared_ptr<sf::Image> img);
     
 private:
     void HandlePlayerMovement(PlayerMovement action);

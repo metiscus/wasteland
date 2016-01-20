@@ -53,6 +53,51 @@ std::shared_ptr<Map> Map::Load(const std::string& filename)
     return ret;
 }
 
+std::shared_ptr<Map> Map::Load(std::shared_ptr<sf::Image> img)
+{
+    auto ret = std::make_shared<Map>();
+    sf::Vector2u size = img->getSize();
+    ret->tiles.resize(size.x*size.y);
+    ret->lit.resize(size.x*size.y);
+    ret->width = size.x;
+    ret->height= size.y;
+    
+    for(uint32_t yy=0; yy<size.y; ++yy)
+    {
+        for(uint32_t xx=0; xx<size.x; ++xx)
+        {
+            sf::Color pix = img->getPixel(xx, yy);
+
+            ret->tiles[xx+yy*size.x].visited = false;
+            
+            TileType type = (TileType)(uint32_t)pix.r;
+
+            ret->tiles[xx+yy*size.x].type = type;
+
+            //TODO: make this better
+            switch(type)
+            {
+                case tile_Ground:
+                case tile_Empty:
+                    ret->tiles[xx+yy*size.x].passable = true;
+                    std::cerr<<"beep\n";
+                    break;
+
+                case tile_Wall:
+                case tile_Water:
+                    ret->tiles[xx+yy*size.x].passable = false;
+                    std::cerr<<"boop\n";
+                    break;
+                    
+                default:
+                    assert(false);
+                    ret->tiles[xx+yy*size.x].type = tile_Invalid;
+            }
+        }
+    }
+    return ret;
+}
+
 Map::Map()
 {
     fov_settings_init(&fov_settings);
