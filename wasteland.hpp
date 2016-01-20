@@ -8,6 +8,14 @@
 
 class Character;
 
+enum PlayerMovement
+{
+    Player_MoveNorth,
+    Player_MoveSouth,
+    Player_MoveEast,
+    Player_MoveWest
+};
+
 class Wasteland final
 {
 private:
@@ -27,6 +35,9 @@ public:
     void Run();
     void Draw();
     void LoadMap(const std::string& filename);
+    
+private:
+    void HandlePlayerMovement(PlayerMovement action);
 };
 
 #endif

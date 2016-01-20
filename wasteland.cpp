@@ -72,17 +72,21 @@ void Wasteland::Run()
             {
                 switch(event.key.code)
                 {
+                    case sf::Keyboard::Numpad4:
                     case sf::Keyboard::A:
-                        player_->Move(sf::Vector2f(-1.0, 0.0));
+                        HandlePlayerMovement(Player_MoveWest);
                         break;
+                    case sf::Keyboard::Numpad2:
                     case sf::Keyboard::S:
-                        player_->Move(sf::Vector2f(0.0, 1.0));
+                        HandlePlayerMovement(Player_MoveSouth);
                         break;
+                    case sf::Keyboard::Numpad6:
                     case sf::Keyboard::D:
-                        player_->Move(sf::Vector2f(1.0, 0.0));
+                        HandlePlayerMovement(Player_MoveEast);
                         break;
+                    case sf::Keyboard::Numpad8:
                     case sf::Keyboard::W:
-                        player_->Move(sf::Vector2f(0.0, -1.0));
+                        HandlePlayerMovement(Player_MoveNorth);
                         break;
                     default:
                     {
@@ -125,6 +129,38 @@ void Wasteland::Draw()
     window_->draw(*sprites_[0]);
     
     window_->display();
+}
+
+void Wasteland::HandlePlayerMovement(PlayerMovement action)
+{
+    auto move_to_pos = player_->GetPosition();
+    switch(action)
+    {
+        case Player_MoveNorth:
+            move_to_pos += sf::Vector2f(0.0, -1.0);
+            break;
+        case Player_MoveEast:
+            move_to_pos += sf::Vector2f(1.0, 0.0);
+            break;
+        case Player_MoveSouth:
+            move_to_pos += sf::Vector2f(0.0, 1.0);
+            break;
+        case Player_MoveWest:
+            move_to_pos += sf::Vector2f(-1.0, 0.0);
+            break;
+    }
+    
+    auto &tile = map_->Get(move_to_pos.x, move_to_pos.y);
+    if(!tile.passable)
+    {
+        move_to_pos = player_->GetPosition();
+    }
+    else
+    {
+        tile.visited = true;
+    }
+    
+    player_->SetPosition(move_to_pos);
 }
 
 void Wasteland::LoadMap(const std::string& filename)

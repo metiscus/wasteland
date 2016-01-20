@@ -1,4 +1,5 @@
 #include "map.hpp"
+#include <cassert>
 #include <iostream>
 #include <fstream>
 
@@ -27,6 +28,24 @@ std::shared_ptr<Map> Map::Load(const std::string& filename)
 
             infile>>visited;
             ret->tiles[ii].visited = visited;
+            
+            //TODO: make this better
+            switch((TileType)type)
+            {
+                case tile_Ground:
+                case tile_Empty:
+                    ret->tiles[ii].passable = true;
+                    break;
+
+                case tile_Invalid:
+                case tile_Wall:
+                case tile_Water:
+                    ret->tiles[ii].passable = false;
+                    break;
+                    
+                default:
+                    assert(false);
+            }
         }
     }
     infile.close();
