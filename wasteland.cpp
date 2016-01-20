@@ -10,6 +10,7 @@
 Wasteland::Wasteland()
     : should_quit_(false)
     , player_(new Character())
+    , turn_(0)
 {
     window_ = std::make_unique<sf::RenderWindow>(sf::VideoMode(800, 600), "Wasteland");
     
@@ -166,12 +167,9 @@ void Wasteland::Draw()
     sprites_[0]->setPosition(player_->GetPosition() * 32.0f);
     window_->draw(*sprites_[0]);
     
+    
     window_->setView(text_view_);
-    char buffer[1000];
-    sprintf(buffer, "Position: (%10d, %10d)", 
-        (uint32_t)player_->GetPosition().x,
-        (uint32_t)player_->GetPosition().y );
-    sf::Text position(buffer, font_);
+    sf::Text position(GetStatusLine().c_str(), font_);
     position.setCharacterSize(20);
     window_->draw(position);
     
@@ -180,6 +178,7 @@ void Wasteland::Draw()
 
 void Wasteland::HandlePlayerMovement(PlayerMovement action)
 {
+    ++turn_;
     auto move_to_pos = player_->GetPosition();
     switch(action)
     {
@@ -248,6 +247,20 @@ void Wasteland::LoadMap(std::shared_ptr<sf::Image> img)
     map_->SetRadiation(10, 9, 0.5);
     map_->SetRadiation(11, 9, 0.25);
     map_->SetRadiation(12, 9, 0.1);
+}
+
+std::string Wasteland::GetStatusLine()
+{
+    char buffer[1000];
+    sprintf(buffer, "Status: Turn:%5d Position:(%3d, %3d) HP:(%3d/%3d)", 
+        turn_,
+        (uint32_t)player_->GetPosition().x,
+        (uint32_t)player_->GetPosition().y,
+        (uint32_t)player_->GetHealth(),
+        (uint32_t)player_->GetMaxHealth()
+    );
+    
+    return std::string(buffer);
 }
 
 int main(int argc, char** argv)

@@ -40,6 +40,7 @@ private:
     
     float zoom_;
 
+    uint32_t turn_;
 public:
     Wasteland();
     
@@ -51,6 +52,7 @@ public:
 private:
     void HandlePlayerMovement(PlayerMovement action);
     void UpdateVisited();
+    std::string GetStatusLine();
 };
 
 #endif
