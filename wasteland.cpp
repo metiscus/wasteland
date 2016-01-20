@@ -160,19 +160,15 @@ void Wasteland::HandlePlayerMovement(PlayerMovement action)
     {
         case Player_MoveNorth:
             move_to_pos += sf::Vector2f(0.0, -1.0);
-            view_.move(sf::Vector2f(0.0, -32.0));
             break;
         case Player_MoveEast:
             move_to_pos += sf::Vector2f(1.0, 0.0);
-            view_.move(sf::Vector2f(32.0, 0.0));
             break;
         case Player_MoveSouth:
             move_to_pos += sf::Vector2f(0.0, 1.0);
-            view_.move(sf::Vector2f(0.0, 32.0));
             break;
         case Player_MoveWest:
             move_to_pos += sf::Vector2f(-1.0, 0.0);
-            view_.move(sf::Vector2f(-32.0, 0.0));
             break;
     }
     
@@ -187,6 +183,7 @@ void Wasteland::HandlePlayerMovement(PlayerMovement action)
     }
     
     player_->SetPosition(move_to_pos);
+    view_.setCenter(move_to_pos * 32.0f);
     
     UpdateVisited();
 }
