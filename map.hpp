@@ -7,6 +7,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include "fov.h"
+#include "object.hpp"
 
 enum TileType
 {
@@ -24,6 +25,7 @@ struct MapTile
     TileType type;
     bool visited;
     bool passable;
+    std::vector<ObjectPtr> objects;
 };
 
 class Map final

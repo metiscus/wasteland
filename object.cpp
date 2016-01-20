@@ -12,7 +12,7 @@ Object::Object()
     name = "(invalid object)";
 }
 
-std::shared_ptr<Object> Object::BuildFromString(const std::string& str)
+ObjectPtr Object::BuildFromString(const std::string& str)
 {
     auto ret = std::make_shared<Object>();
     std::vector<std::string> tokens = TokenizeString(str);
