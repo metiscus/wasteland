@@ -5,6 +5,7 @@
 #include <string>
 
 #include <SFML/Graphics.hpp>
+#include "object.hpp"
 
 struct CharacterData;
 
@@ -31,6 +32,10 @@ public:
     void SetHealth(uint32_t health);
     void SetMaxHealth(uint32_t max);
     void SetRadiation(uint32_t rad);
+    
+    bool AddInventoryItem(std::shared_ptr<Object> object);
+    std::vector<std::shared_ptr<Object> > GetInventoryItemsByType(ObjectType type);
+    void RemoveInventoryItem(uint32_t id, uint32_t qty);
 };
 
 

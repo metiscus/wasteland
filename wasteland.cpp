@@ -1,5 +1,6 @@
 #include "wasteland.hpp"
 #include "character.hpp"
+#include "object.hpp"
 
 #include <SFML/Window.hpp>
 
@@ -49,6 +50,9 @@ Wasteland::Wasteland()
     sprites_[1] = greens;
     
     player_->SetPosition(sf::Vector2f(5.0, 5.0));
+    
+    auto knife = Object::BuildFromString(std::string("4,1,10,1,Combat Knife"));
+    player_->AddInventoryItem(knife);
 }
 
 void Wasteland::Run()
@@ -67,10 +71,22 @@ void Wasteland::Run()
             {
                 switch(event.key.code)
                 {
-                    
                     case sf::Keyboard::A:
                         player_->Move(sf::Vector2f(-1.0, 0.0));
                         break;
+                    case sf::Keyboard::S:
+                        player_->Move(sf::Vector2f(0.0, 1.0));
+                        break;
+                    case sf::Keyboard::D:
+                        player_->Move(sf::Vector2f(1.0, 0.0));
+                        break;
+                    case sf::Keyboard::W:
+                        player_->Move(sf::Vector2f(0.0, -1.0));
+                        break;
+                    default:
+                        {
+                            
+                        }
                 }
             }
         }

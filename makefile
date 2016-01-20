@@ -14,6 +14,7 @@ SRC:=\
 	character.cpp\
 	map.cpp\
 	utility.cpp\
+	object.cpp\
 
 OBJ:=$(SRC:.cpp=.o)
 
