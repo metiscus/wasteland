@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <string>
+#include <unordered_map>
 
 #include <SFML/Graphics.hpp>
 #include "object.hpp"
@@ -11,8 +12,16 @@ struct CharacterData;
 
 class Character
 {
-    std::unique_ptr<CharacterData> data_;
-    
+    uint32_t strength;
+    uint32_t health;
+    uint32_t max_health;
+    uint32_t radiation;
+    std::string name;
+    sf::Vector2f position;
+    sf::Vector2f facing;
+    uint32_t inventory_weight;
+    std::unordered_map<uint32_t, std::shared_ptr<Object> > inventory;
+
 public:
     Character();
     ~Character();

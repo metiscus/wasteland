@@ -2,19 +2,7 @@
 #include <iostream>
 #include <fstream>
 
-struct MapData
-{
-    MapData()
-        : width(0)
-        , height(0)
-    { }
-    uint32_t width;
-    uint32_t height;
-    std::vector<MapTile> tiles;
-};
-
 Map::Map()
-    : data_(new MapData())
 {
 }
 
@@ -24,21 +12,21 @@ std::shared_ptr<Map> Map::Load(const std::string& filename)
     std::ifstream infile(filename.c_str());
     if(infile.is_open())
     {
-        infile>>ret->data_->width;
-        infile>>ret->data_->height;
-        ret->data_->tiles.resize(ret->data_->width*ret->data_->height);
+        infile>>ret->width;
+        infile>>ret->height;
+        ret->tiles.resize(ret->width*ret->height);
         uint32_t type, visited;
-        for(uint32_t ii=0; ii<ret->data_->width*ret->data_->height; ++ii)
+        for(uint32_t ii=0; ii<ret->width*ret->height; ++ii)
         {
             infile>>type;
-            ret->data_->tiles[ii].type = (TileType)type;
+            ret->tiles[ii].type = (TileType)type;
             if((TileType)type >= tile_Count)
             {
                 std::cerr<<"Saw an invalid tile type "<<type<<"\n";
             }
 
             infile>>visited;
-            ret->data_->tiles[ii].visited = visited;
+            ret->tiles[ii].visited = visited;
         }
     }
     infile.close();
@@ -51,32 +39,32 @@ void Map::Save(const char* filename) const
     std::ofstream outfile(filename);
     if(outfile.is_open())
     {
-        outfile<<data_->width<<" ";
-        outfile<<data_->height<<" ";
-        for(uint32_t ii=0; ii<data_->width*data_->height; ++ii)
+        outfile<<width<<" ";
+        outfile<<height<<" ";
+        for(uint32_t ii=0; ii<width*height; ++ii)
         {
-            outfile<<data_->tiles[ii].type;
-            outfile<<data_->tiles[ii].visited;
+            outfile<<tiles[ii].type;
+            outfile<<tiles[ii].visited;
         }
     }
 }
     
 const MapTile& Map::Get(uint32_t x, uint32_t y) const
 {
-    return data_->tiles[x+y*data_->width];
+    return tiles[x+y*width];
 }
 
 MapTile& Map::Get(uint32_t x, uint32_t y)
 {
-    return data_->tiles[x+y*data_->width];
+    return tiles[x+y*width];
 }
 
 uint32_t Map::GetWidth() const
 {
-    return data_->width;
+    return width;
 }
 
 uint32_t Map::GetHeight() const
 {
-    return data_->height;
+    return height;
 }

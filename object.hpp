@@ -21,8 +21,12 @@ struct ObjectData;
 class Object final
 {
 private:
-    std::unique_ptr<ObjectData> data_;
-    
+    ObjectType type;
+    uint32_t uid;
+    uint32_t weight;
+    uint32_t quantity;
+    std::string name;
+
 public:
     Object();
     static std::shared_ptr<Object> BuildFromString(const std::string& str);

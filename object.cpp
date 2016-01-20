@@ -3,23 +3,13 @@
 
 #include <sstream>
 
-struct ObjectData
-{
-    ObjectType type;
-    uint32_t uid;
-    uint32_t weight;
-    uint32_t quantity;
-    std::string name;
-};
-
 Object::Object()
-    : data_( new ObjectData() )
 {
-    data_->uid = 0;
-    data_->type = object_Invalid;
-    data_->weight = 0;
-    data_->quantity = 1;
-    data_->name = "(invalid object)";
+    uid = 0;
+    type = object_Invalid;
+    weight = 0;
+    quantity = 1;
+    name = "(invalid object)";
 }
 
 std::shared_ptr<Object> Object::BuildFromString(const std::string& str)
@@ -33,21 +23,21 @@ std::shared_ptr<Object> Object::BuildFromString(const std::string& str)
         ss<<tokens[0];
         uint32_t tmp;
         ss>>tmp;
-        ret->data_->type = (ObjectType)tmp;
+        ret->type = (ObjectType)tmp;
 
         ss.clear();
         ss<<tokens[1];
-        ss>>ret->data_->uid;
+        ss>>ret->uid;
         
         ss.clear();
         ss<<tokens[2];
-        ss>>ret->data_->weight;
+        ss>>ret->weight;
 
         ss.clear();
         ss<<tokens[3];
-        ss>>ret->data_->quantity;
+        ss>>ret->quantity;
         
-        ret->data_->name = tokens[4];
+        ret->name = tokens[4];
     }
     
     return ret;
@@ -56,42 +46,42 @@ std::shared_ptr<Object> Object::BuildFromString(const std::string& str)
 std::string Object::ToString() const
 {
     std::stringstream ss;
-    ss<<data_->type<<","<<data_->uid<<","<<data_->weight<<","<<data_->quantity<<","<<data_->name;
+    ss<<type<<","<<uid<<","<<weight<<","<<quantity<<","<<name;
 
     return ss.str();
 }
 
 uint32_t Object::GetUID() const
 {
-    return data_->uid;
+    return uid;
 }
 
 ObjectType Object::GetType() const
 {
-    return data_->type;
+    return type;
 }
 
 std::string Object::GetName() const
 {
-    return data_->name;
+    return name;
 }
 
 uint32_t Object::GetWeight() const
 {
-    return data_->weight;
+    return weight;
 }
 
 uint32_t Object::GetQuantity() const
 {
-    return data_->quantity;
+    return quantity;
 }
 
 void Object::SetQuantity(uint32_t qty)
 {
-    data_->quantity = qty;
+    quantity = qty;
 }
 
 void Object::AddQuantity(uint32_t qty)
 {
-    data_->quantity += qty;
+    quantity += qty;
 }

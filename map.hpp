@@ -21,14 +21,15 @@ struct MapTile
 {
     TileType type;
     bool visited;
+    bool passable;
 };
-
-struct MapData;
 
 class Map final
 {
 private:
-    std::unique_ptr<MapData> data_;
+    uint32_t width;
+    uint32_t height;
+    std::vector<MapTile> tiles;
 
 public:
     Map();

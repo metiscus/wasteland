@@ -1,30 +1,20 @@
 #include "character.hpp"
-#include <unordered_map>
 
 struct CharacterData
 {
-    uint32_t strength;
-    uint32_t health;
-    uint32_t max_health;
-    uint32_t radiation;
-    std::string name;
-    sf::Vector2f position;
-    sf::Vector2f facing;
-    uint32_t inventory_weight;
-    std::unordered_map<uint32_t, std::shared_ptr<Object> > inventory;
+
 };
 
 static const uint32_t MaxInventoryWeightPerStrength = 10;
 
 Character::Character()
-    : data_(new CharacterData())
 {
-    data_->strength = 10;
-    data_->health = 10;
-    data_->max_health = 10;
-    data_->radiation = 0;
-    data_->name = std::string("(invalid character)");
-    data_->inventory_weight = 0;
+    strength = 10;
+    health = 10;
+    max_health = 10;
+    radiation = 0;
+    name = std::string("(invalid character)");
+    inventory_weight = 0;
 }
 
 Character::~Character()
@@ -34,32 +24,32 @@ Character::~Character()
 
 const std::string&  Character::GetName() const
 {
-    return data_->name;
+    return name;
 }
 
 const sf::Vector2f& Character::GetPosition() const
 {
-    return data_->position;
+    return position;
 }
 
 const sf::Vector2f& Character::GetFacing() const
 {
-    return data_->facing;
+    return facing;
 }
 
 uint32_t Character::GetHealth() const
 {
-    return data_->health;
+    return health;
 }
 
 uint32_t Character::GetMaxHealth() const
 {
-    return data_->max_health;
+    return max_health;
 }
 
 uint32_t Character::GetRadiation() const
 {
-    return data_->radiation;
+    return radiation;
 }
 
 void Character::Move(const sf::Vector2f& vec)
@@ -69,50 +59,50 @@ void Character::Move(const sf::Vector2f& vec)
 
 void Character::SetName(const std::string& name)
 {
-    data_->name = name;
+    this->name = name;
 }
 
 void Character::SetPosition(const sf::Vector2f& vec)
 {
-    data_->position = vec;
+    position = vec;
 }
 
 void Character::SetFacing(const sf::Vector2f& vec)
 {
-    data_->facing = vec;
+    facing = vec;
 }
 
 void Character::SetHealth(uint32_t health)
 {
-    data_->health = health;
+    health = health;
 }
 
 void Character::SetMaxHealth(uint32_t max)
 {
-    data_->max_health = max;
+    max_health = max;
 }
 
 void Character::SetRadiation(uint32_t rad)
 {
-    data_->radiation = rad;
+    radiation = rad;
 }
 
 bool Character::AddInventoryItem(std::shared_ptr<Object> object)
 {
-    uint32_t max_carry = data_->strength * MaxInventoryWeightPerStrength;
-    if(object->GetWeight() * object->GetQuantity() + data_->inventory_weight > max_carry)
+    uint32_t max_carry = strength * MaxInventoryWeightPerStrength;
+    if(object->GetWeight() * object->GetQuantity() + inventory_weight > max_carry)
     {
         return false;
     }
     else
     {
-        data_->inventory_weight += object->GetWeight() * object->GetQuantity();
+        inventory_weight += object->GetWeight() * object->GetQuantity();
     }
 
-    auto itr = data_->inventory.find(object->GetUID());
-    if(itr == data_->inventory.end())
+    auto itr = inventory.find(object->GetUID());
+    if(itr == inventory.end())
     {
-        data_->inventory.emplace(std::make_pair(object->GetUID(), object));
+        inventory.emplace(std::make_pair(object->GetUID(), object));
     }
     else
     {
@@ -124,9 +114,9 @@ bool Character::AddInventoryItem(std::shared_ptr<Object> object)
 std::vector<std::shared_ptr<Object> > Character::GetInventoryItemsByType(ObjectType type)
 {
     std::vector<std::shared_ptr<Object> > ret;
-    ret.reserve(data_->inventory.size());
+    ret.reserve(inventory.size());
 
-    for(auto itr : data_->inventory)
+    for(auto itr : inventory)
     {
         ret.emplace_back(itr.second);
     }
