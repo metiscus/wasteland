@@ -51,6 +51,11 @@ Wasteland::Wasteland()
     
     player_->SetPosition(sf::Vector2f(1.0, 1.0));
     
+    view_.setCenter(player_->GetPosition());
+    window_->setView(view_);
+    
+    zoom_ = 1.0f;
+    
     auto knife = Object::BuildFromString(std::string("4,1,10,1,Combat Knife"));
     std::cerr<<knife->ToString()<<"\n";
     player_->AddInventoryItem(knife);
@@ -87,6 +92,12 @@ void Wasteland::Run()
                     case sf::Keyboard::Numpad8:
                     case sf::Keyboard::W:
                         HandlePlayerMovement(Player_MoveNorth);
+                        break;
+                    case sf::Keyboard::Add:
+                        view_.zoom(0.9);
+                        break;
+                    case sf::Keyboard::Subtract:
+                        view_.zoom(1.111);
                         break;
                     default:
                     {
@@ -137,6 +148,8 @@ void Wasteland::Draw()
     sprites_[0]->setPosition(player_->GetPosition() * 32.0f);
     window_->draw(*sprites_[0]);
     
+    window_->setView(view_);
+    
     window_->display();
 }
 
@@ -147,15 +160,19 @@ void Wasteland::HandlePlayerMovement(PlayerMovement action)
     {
         case Player_MoveNorth:
             move_to_pos += sf::Vector2f(0.0, -1.0);
+            view_.move(sf::Vector2f(0.0, -32.0));
             break;
         case Player_MoveEast:
             move_to_pos += sf::Vector2f(1.0, 0.0);
+            view_.move(sf::Vector2f(32.0, 0.0));
             break;
         case Player_MoveSouth:
             move_to_pos += sf::Vector2f(0.0, 1.0);
+            view_.move(sf::Vector2f(0.0, 32.0));
             break;
         case Player_MoveWest:
             move_to_pos += sf::Vector2f(-1.0, 0.0);
+            view_.move(sf::Vector2f(-32.0, 0.0));
             break;
     }
     

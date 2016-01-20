@@ -29,6 +29,11 @@ private:
     std::unordered_map<uint32_t, std::shared_ptr<sf::Texture> > textures_;
 
     std::unique_ptr<Character> player_;
+    
+    sf::View view_;
+    
+    float zoom_;
+
 public:
     Wasteland();
     
