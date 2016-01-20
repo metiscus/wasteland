@@ -134,6 +134,8 @@ void Wasteland::Draw()
     
     if(map_)
     {
+        UpdateVisited();
+        
         for(uint32_t y = 0; y<map_->GetHeight(); ++y)
         {
             for(uint32_t x = 0; x<map_->GetWidth(); ++x)
@@ -209,7 +211,7 @@ void Wasteland::HandlePlayerMovement(PlayerMovement action)
     player_->SetPosition(move_to_pos);
     view_.setCenter(move_to_pos * 32.0f);
     
-    UpdateVisited();
+    //UpdateVisited();
 }
 
 void Wasteland::UpdateVisited()

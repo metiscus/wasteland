@@ -18,6 +18,9 @@ enum ObjectType
 
 struct ObjectData;
 
+class Object;
+typedef std::shared_ptr<Object> ObjectPtr;
+
 class Object final
 {
 private:
@@ -29,7 +32,7 @@ private:
 
 public:
     Object();
-    static std::shared_ptr<Object> BuildFromString(const std::string& str);
+    static ObjectPtr BuildFromString(const std::string& str);
     std::string ToString() const;
     
     uint32_t GetUID() const;
