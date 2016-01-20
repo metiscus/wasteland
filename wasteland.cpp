@@ -118,7 +118,16 @@ void Wasteland::Draw()
                 auto &tile = map_->Get(x, y);
                 if(tile.visited)
                 {
-                    sprites_[(uint32_t)tile.type]->setPosition(sf::Vector2f(x*32, y*32));
+                    auto sprite = sprites_[(uint32_t)tile.type];
+                    sprite->setPosition(sf::Vector2f(x*32, y*32));
+                    if(!map_->GetLit(x,y))
+                    {
+                        sprite->setColor(sf::Color(100,100,100));
+                    }
+                    else
+                    {
+                        sprite->setColor(sf::Color(255,255,255));
+                    }    
                     window_->draw(*sprites_[(uint32_t)tile.type]);
                 }
             }
@@ -167,31 +176,8 @@ void Wasteland::HandlePlayerMovement(PlayerMovement action)
 
 void Wasteland::UpdateVisited()
 {
-    //TODO: implement a roguelike lighting algorithm here
     auto pos = player_->GetPosition();
-    if(pos.x-1 >= 0)
-    {
-        auto &tile = map_->Get(pos.x-1, pos.y);
-        tile.visited = true;
-    }
-    
-    if(pos.y-1 >= 0)
-    {
-        auto &tile = map_->Get(pos.x, pos.y-1);
-        tile.visited = true;
-    }
-    
-    if(pos.x+1<map_->GetWidth())
-    {
-        auto &tile = map_->Get(pos.x+1, pos.y);
-        tile.visited = true;
-    }
-    
-    if(pos.y+1<map_->GetHeight())
-    {
-        auto &tile = map_->Get(pos.x, pos.y+1);
-        tile.visited = true;
-    }
+    map_->UpdateLighting(pos.x, pos.y, 3);
 }
 
 void Wasteland::LoadMap(const std::string& filename)

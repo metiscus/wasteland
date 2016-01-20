@@ -1,7 +1,7 @@
 CC=gcc
 CXX=g++
 CFLAGS=-g -Wall -Wextra -std=gnu99
-CXXFLAGS=-g -Wall -Wextra --std=gnu++14
+CXXFLAGS=-g -Wall -Wextra --std=gnu++14 -Iextern
 LDFLAGS=
 
 .POSIX:
@@ -9,7 +9,7 @@ LDFLAGS=
 SFML_LDFLAGS:=-lsfml-system -lsfml-window -lsfml-graphics
 CXXFLAGS += $(SFML_LDFLAGS)
 
-default: wasteland
+default: .POSIX wasteland
 
 SRC:=\
 	wasteland.cpp\
