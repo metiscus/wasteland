@@ -177,7 +177,7 @@ void Wasteland::HandlePlayerMovement(PlayerMovement action)
 void Wasteland::UpdateVisited()
 {
     auto pos = player_->GetPosition();
-    map_->UpdateLighting(pos.x, pos.y, 3);
+    map_->UpdateLighting(pos.x, pos.y, 5);
 }
 
 void Wasteland::LoadMap(const std::string& filename)
