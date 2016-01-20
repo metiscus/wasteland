@@ -93,6 +93,18 @@ void Wasteland::Run()
                     case sf::Keyboard::W:
                         HandlePlayerMovement(Player_MoveNorth);
                         break;
+                    case sf::Keyboard::Numpad3:
+                        HandlePlayerMovement(Player_MoveSouthEast);
+                        break;
+                    case sf::Keyboard::Numpad1:
+                        HandlePlayerMovement(Player_MoveSouthWest);
+                        break;
+                    case sf::Keyboard::Numpad9:
+                        HandlePlayerMovement(Player_MoveNorthEast);
+                        break;
+                    case sf::Keyboard::Numpad7:
+                        HandlePlayerMovement(Player_MoveNorthWest);
+                        break;
                     case sf::Keyboard::Add:
                         view_.zoom(0.9);
                         break;
@@ -169,6 +181,18 @@ void Wasteland::HandlePlayerMovement(PlayerMovement action)
             break;
         case Player_MoveWest:
             move_to_pos += sf::Vector2f(-1.0, 0.0);
+            break;
+        case Player_MoveNorthWest:
+            move_to_pos += sf::Vector2f(-1.0, -1.0);
+            break;
+        case Player_MoveNorthEast:
+            move_to_pos += sf::Vector2f(1.0, -1.0);
+            break;
+        case Player_MoveSouthWest:
+            move_to_pos += sf::Vector2f(-1.0, 1.0);
+            break;
+        case Player_MoveSouthEast:
+            move_to_pos += sf::Vector2f(1.0, 1.0);
             break;
     }
     

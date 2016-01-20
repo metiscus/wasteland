@@ -13,7 +13,11 @@ enum PlayerMovement
     Player_MoveNorth,
     Player_MoveSouth,
     Player_MoveEast,
-    Player_MoveWest
+    Player_MoveWest,
+    Player_MoveNorthWest,
+    Player_MoveNorthEast,
+    Player_MoveSouthWest,
+    Player_MoveSouthEast
 };
 
 class Wasteland final
