@@ -1,19 +1,20 @@
 #include "character.hpp"
+#include <cassert>
 
 static const uint32_t MaxInventoryWeightPerStrength = 10;
 
 Character::Character()
 {
-    strength = 10;
-    health = 10;
-    max_health = 10;
-    food = 1000;
-    radiation = 0;
-    name = std::string("(invalid character)");
-    inventory_weight = 0;
+    strength_ = 10;
+    health_ = 10;
+    max_health_ = 10;
+    food_ = 1000;
+    radiation_ = 0;
+    name_ = std::string("(invalid character)");
+    inventory_weight_ = 0;
     
-    traits.can_swim = 1;
-    traits.needs_food = 1;
+    traits_.can_swim = 1;
+    traits_.needs_food = 1;
 }
 
 Character::~Character()
@@ -23,42 +24,42 @@ Character::~Character()
 
 const std::string&  Character::GetName() const
 {
-    return name;
+    return name_;
 }
 
 const sf::Vector2f& Character::GetPosition() const
 {
-    return position;
+    return position_;
 }
 
 const sf::Vector2f& Character::GetFacing() const
 {
-    return facing;
+    return facing_;
 }
 
 uint32_t Character::GetHealth() const
 {
-    return health;
+    return health_;
 }
 
 uint32_t Character::GetMaxHealth() const
 {
-    return max_health;
+    return max_health_;
 }
 
 uint32_t Character::GetRadiation() const
 {
-    return radiation;
+    return radiation_;
 }
 
 CharacterTraits Character::GetTraits() const
 {
-    return traits;
+    return traits_;
 }
 
 uint32_t Character::GetFood() const
 {
-    return food;
+    return food_;
 }
 
 void Character::Move(const sf::Vector2f& vec)
@@ -68,65 +69,65 @@ void Character::Move(const sf::Vector2f& vec)
 
 void Character::SetName(const std::string& name)
 {
-    this->name = name;
+    name_ = name;
 }
 
 void Character::SetPosition(const sf::Vector2f& vec)
 {
-    position = vec;
+    position_ = vec;
 }
 
 void Character::SetFacing(const sf::Vector2f& vec)
 {
-    facing = vec;
+    facing_ = vec;
 }
 
 void Character::SetHealth(uint32_t health)
 {
-    health = health;
+    health_ = health;
 }
 
 void Character::SetMaxHealth(uint32_t max)
 {
-    max_health = max;
+    max_health_ = max;
 }
 
 void Character::SetRadiation(uint32_t rad)
 {
-    radiation = rad;
+    radiation_ = rad;
 }
 
 void Character::SetTraits(const CharacterTraits& traits)
 {
-    this->traits = traits;
+    traits_ = traits;
 }
 
 void Character::SetFood(uint32_t food)
 {
-    this->food = food;
+    food_ = food;
 }
 
 void Character::ChangeFood(int32_t food)
 {
-    this->food += food;
+    food_ += food;
 }
 
 bool Character::AddInventoryItem(std::shared_ptr<Object> object)
 {
-    uint32_t max_carry = strength * MaxInventoryWeightPerStrength;
-    if(object->GetWeight() * object->GetQuantity() + inventory_weight > max_carry)
+    uint32_t max_carry = strength_ * MaxInventoryWeightPerStrength;
+    if(object->GetWeight() * object->GetQuantity() + inventory_weight_ > max_carry)
     {
         return false;
     }
     else
     {
-        inventory_weight += object->GetWeight() * object->GetQuantity();
+        inventory_weight_ += object->GetWeight() * object->GetQuantity();
     }
 
-    auto itr = inventory.find(object->GetUID());
-    if(itr == inventory.end())
+    auto itr = inventory_.find(object->GetUID());
+    if(itr == inventory_.end())
     {
-        inventory.emplace(std::make_pair(object->GetUID(), object));
+        inventory_.emplace(std::make_pair(object->GetUID(), object));
     }
     else
     {
@@ -138,9 +139,9 @@ bool Character::AddInventoryItem(std::shared_ptr<Object> object)
 std::vector<std::shared_ptr<Object> > Character::GetInventoryItemsByType(ObjectType type)
 {
     std::vector<std::shared_ptr<Object> > ret;
-    ret.reserve(inventory.size());
+    ret.reserve(inventory_.size());
 
-    for(auto itr : inventory)
+    for(auto itr : inventory_)
     {
         ret.emplace_back(itr.second);
     }
@@ -150,4 +151,5 @@ std::vector<std::shared_ptr<Object> > Character::GetInventoryItemsByType(ObjectT
 void Character::RemoveInventoryItem(uint32_t id, uint32_t qty)
 {
     //TODO
+    assert(false);
 }

@@ -22,18 +22,19 @@ typedef std::shared_ptr<Character> CharacterPtr;
 
 class Character
 {
-    uint32_t strength;
-    uint32_t health;
-    uint32_t max_health;
-    uint32_t radiation;
-    uint32_t food;
-    std::string name;
-    sf::Vector2f position;
-    sf::Vector2f facing;
-    uint32_t inventory_weight;
-    std::unordered_map<uint32_t, std::shared_ptr<Object> > inventory;
+    uint32_t strength_;
+    uint32_t health_;
+    uint32_t max_health_;
+    uint32_t radiation_;
+    uint32_t food_;
+    std::string name_;
+    sf::Vector2f position_;
+    sf::Vector2f facing_;
+    uint32_t inventory_weight_;
+    std::unordered_map<uint32_t, std::shared_ptr<Object> > inventory_;
     
-    CharacterTraits traits;
+    CharacterTraits traits_;
+
 
 public:
     Character();
