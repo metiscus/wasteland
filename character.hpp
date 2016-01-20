@@ -26,6 +26,7 @@ class Character
     uint32_t health;
     uint32_t max_health;
     uint32_t radiation;
+    uint32_t food;
     std::string name;
     sf::Vector2f position;
     sf::Vector2f facing;
@@ -45,6 +46,8 @@ public:
     uint32_t GetMaxHealth() const;
     uint32_t GetRadiation() const;
     CharacterTraits GetTraits() const;
+    uint32_t GetFood() const;
+    
 
     void Move(const sf::Vector2f& vec);
 
@@ -55,6 +58,8 @@ public:
     void SetMaxHealth(uint32_t max);
     void SetRadiation(uint32_t rad);
     void SetTraits(const CharacterTraits& traits);
+    void SetFood(uint32_t food);
+    void ChangeFood(int32_t food);
     
     bool AddInventoryItem(std::shared_ptr<Object> object);
     std::vector<std::shared_ptr<Object> > GetInventoryItemsByType(ObjectType type);

@@ -7,6 +7,7 @@ Character::Character()
     strength = 10;
     health = 10;
     max_health = 10;
+    food = 1000;
     radiation = 0;
     name = std::string("(invalid character)");
     inventory_weight = 0;
@@ -55,6 +56,11 @@ CharacterTraits Character::GetTraits() const
     return traits;
 }
 
+uint32_t Character::GetFood() const
+{
+    return food;
+}
+
 void Character::Move(const sf::Vector2f& vec)
 {
     SetPosition(GetPosition() + vec);
@@ -93,6 +99,16 @@ void Character::SetRadiation(uint32_t rad)
 void Character::SetTraits(const CharacterTraits& traits)
 {
     this->traits = traits;
+}
+
+void Character::SetFood(uint32_t food)
+{
+    this->food = food;
+}
+
+void Character::ChangeFood(int32_t food)
+{
+    this->food += food;
 }
 
 bool Character::AddInventoryItem(std::shared_ptr<Object> object)

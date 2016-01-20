@@ -119,6 +119,9 @@ void Wasteland::Run()
 
                     }
                 }
+                
+                //TODO: this is a hack
+                player_->ChangeFood(-1);
             }
         }
 
@@ -228,6 +231,12 @@ void Wasteland::HandlePlayerMovement(PlayerMovement action)
 
 void Wasteland::UpdateMap()
 {
+    if(player_->GetFood() == 0)
+    {
+        std::cerr<<"Game Over!\n";
+        should_quit_ = true;
+    }
+
     if(map_)
     {
         auto characters = map_->GetCharacters();
@@ -268,7 +277,7 @@ void Wasteland::LoadMap(std::shared_ptr<sf::Image> img)
 std::string Wasteland::GetStatusLine()
 {
     char buffer[1000];
-    sprintf(buffer, "Status: Turn:%5d Position:(%3d, %3d) HP:(%3d/%3d)", 
+    sprintf(buffer, "Turn:%5d Position:(%3d, %3d) HP:(%3d/%3d)", 
         turn_,
         (uint32_t)player_->GetPosition().x,
         (uint32_t)player_->GetPosition().y,
@@ -276,7 +285,14 @@ std::string Wasteland::GetStatusLine()
         (uint32_t)player_->GetMaxHealth()
     );
     
-    return std::string(buffer);
+    std::string ret = buffer;
+    
+    if(player_->GetFood() < 500)
+    {
+        ret += " HUNGRY";
+    }
+
+    return ret;
 }
 
 int main(int argc, char** argv)
