@@ -62,6 +62,11 @@ uint32_t Character::GetFood() const
     return food_;
 }
 
+uint32_t Character::GetSpriteId() const
+{
+    return sprite_id_;
+}
+
 void Character::Move(const sf::Vector2f& vec)
 {
     SetPosition(GetPosition() + vec);
@@ -107,6 +112,11 @@ void Character::SetFood(uint32_t food)
     food_ = food;
 }
 
+void Character::SetSpriteId(uint32_t id)
+{
+    sprite_id_ = id;
+}
+
 void Character::ChangeFood(int32_t food)
 {
     food_ += food;
@@ -143,13 +153,28 @@ std::vector<std::shared_ptr<Object> > Character::GetInventoryItemsByType(ObjectT
 
     for(auto itr : inventory_)
     {
-        ret.emplace_back(itr.second);
+        if(itr.second->GetType() == type)
+        {
+            ret.push_back(itr.second);
+        }
     }
     return ret;
 }
 
 void Character::RemoveInventoryItem(uint32_t id, uint32_t qty)
 {
-    //TODO
-    assert(false);
+    auto itr = inventory_.find(id); 
+    if(itr != inventory_.end())
+    {
+        // decrement the quantity or possibly remove the object
+        auto obj = itr->second;
+        if(obj->GetQuantity() <= qty)
+        {
+            inventory_.erase(itr);
+        }
+        else
+        {
+            obj->SetQuantity(obj->GetQuantity() - qty);
+        }
+    }
 }

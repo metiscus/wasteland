@@ -34,6 +34,8 @@ class Character
     std::unordered_map<uint32_t, std::shared_ptr<Object> > inventory_;
     
     CharacterTraits traits_;
+    
+    uint32_t sprite_id_;
 
 
 public:
@@ -48,10 +50,11 @@ public:
     uint32_t GetRadiation() const;
     CharacterTraits GetTraits() const;
     uint32_t GetFood() const;
-    
+    uint32_t GetSpriteId() const;
 
     void Move(const sf::Vector2f& vec);
 
+    void SetSpriteId(const uint32_t id);
     void SetName(const std::string& name);
     void SetPosition(const sf::Vector2f& vec);
     void SetFacing(const sf::Vector2f& vec);
