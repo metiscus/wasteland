@@ -41,6 +41,8 @@ private:
     float zoom_;
 
     uint32_t turn_;
+    bool console_;
+    std::string console_command_;
 public:
     Wasteland();
     
@@ -55,6 +57,7 @@ private:
     void UpdateMap();
     void ProcessInput();
     void Draw();
+    void DoCommand(const std::string& str);
 };
 
 #endif

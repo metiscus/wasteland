@@ -1,6 +1,8 @@
 #include "wasteland.hpp"
 #include "character.hpp"
 #include "object.hpp"
+#include "utility.hpp"
+#include <sstream>
 
 #include <SFML/Window.hpp>
 
@@ -11,6 +13,7 @@ Wasteland::Wasteland()
     : should_quit_(false)
     , player_(new Character())
     , turn_(0)
+    , console_(false)
 {
     window_ = std::make_unique<sf::RenderWindow>(sf::VideoMode(800, 600), "Wasteland");
    
@@ -79,7 +82,7 @@ void Wasteland::Run()
 
 void Wasteland::ProcessInput()
 {
-        sf::Event event;
+    sf::Event event;
     while (window_->pollEvent(event))
     {
         if (event.type == sf::Event::Closed)
@@ -89,50 +92,89 @@ void Wasteland::ProcessInput()
 
         if (event.type == sf::Event::KeyPressed)
         {
-            switch(event.key.code)
+            if(console_)
             {
-                case sf::Keyboard::Numpad4:
-                case sf::Keyboard::A:
-                    HandlePlayerMovement(Player_MoveWest);
-                    break;
-                case sf::Keyboard::Numpad2:
-                case sf::Keyboard::S:
-                    HandlePlayerMovement(Player_MoveSouth);
-                    break;
-                case sf::Keyboard::Numpad6:
-                case sf::Keyboard::D:
-                    HandlePlayerMovement(Player_MoveEast);
-                    break;
-                case sf::Keyboard::Numpad8:
-                case sf::Keyboard::W:
-                    HandlePlayerMovement(Player_MoveNorth);
-                    break;
-                case sf::Keyboard::Numpad3:
-                    HandlePlayerMovement(Player_MoveSouthEast);
-                    break;
-                case sf::Keyboard::Numpad1:
-                    HandlePlayerMovement(Player_MoveSouthWest);
-                    break;
-                case sf::Keyboard::Numpad9:
-                    HandlePlayerMovement(Player_MoveNorthEast);
-                    break;
-                case sf::Keyboard::Numpad7:
-                    HandlePlayerMovement(Player_MoveNorthWest);
-                    break;
-                case sf::Keyboard::Add:
-                    view_.zoom(0.9);
-                    break;
-                case sf::Keyboard::Subtract:
-                    view_.zoom(1.111);
-                    break;
-                default:
-                    {
+                //TODO: do this better
+                switch(event.key.code)
+                {
+                    case sf::Keyboard::Escape:
+                        console_ = false;
+                        break;
+                    case sf::Keyboard::Space:
+                        console_command_ += " ";
+                        break;
+                    case sf::Keyboard::BackSpace:
+                        console_command_ = console_command_.substr(0, console_command_.length()-1);
+                        break;
+                    case sf::Keyboard::Return:
+                        DoCommand(console_command_);
+                        break;
+                    case sf::Keyboard::Dash:
+                    case sf::Keyboard::Subtract:
+                        console_command_ += "-";
+                        break;
 
-                    }
+                    default:
+                        if(event.key.code < sf::Keyboard::Num9 && event.key.code != sf::Keyboard::Unknown)
+                        {
+                            std::string letters = "abcdefghijklmnopqrstuvwxyz0123456789";
+                            console_command_ += letters[event.key.code];
+                        }
+                        break;
+                }
             }
+            else
+            {
+                switch(event.key.code)
+                {
+                    case sf::Keyboard::Tilde:
+                        console_ = true;
+                        console_command_ = "";
+                        break;
 
-            //TODO: this is a hack
-            player_->ChangeFood(-1);
+                    case sf::Keyboard::Numpad4:
+                    case sf::Keyboard::A:
+                        HandlePlayerMovement(Player_MoveWest);
+                        break;
+                    case sf::Keyboard::Numpad2:
+                    case sf::Keyboard::S:
+                        HandlePlayerMovement(Player_MoveSouth);
+                        break;
+                    case sf::Keyboard::Numpad6:
+                    case sf::Keyboard::D:
+                        HandlePlayerMovement(Player_MoveEast);
+                        break;
+                    case sf::Keyboard::Numpad8:
+                    case sf::Keyboard::W:
+                        HandlePlayerMovement(Player_MoveNorth);
+                        break;
+                    case sf::Keyboard::Numpad3:
+                        HandlePlayerMovement(Player_MoveSouthEast);
+                        break;
+                    case sf::Keyboard::Numpad1:
+                        HandlePlayerMovement(Player_MoveSouthWest);
+                        break;
+                    case sf::Keyboard::Numpad9:
+                        HandlePlayerMovement(Player_MoveNorthEast);
+                        break;
+                    case sf::Keyboard::Numpad7:
+                        HandlePlayerMovement(Player_MoveNorthWest);
+                        break;
+                    case sf::Keyboard::Add:
+                        view_.zoom(0.9);
+                        break;
+                    case sf::Keyboard::Subtract:
+                        view_.zoom(1.111);
+                        break;
+                    default:
+                        {
+
+                        }
+                }
+
+                //TODO: this is a hack
+                player_->ChangeFood(-1);
+            }
         }
     }
 }
@@ -181,10 +223,24 @@ void Wasteland::Draw()
     window_->draw(*sprites_[0]);
     
     
+    /// Print text elements
     window_->setView(text_view_);
+    
+    // Status line
     sf::Text position(GetStatusLine().c_str(), font_);
     position.setCharacterSize(20);
     window_->draw(position);
+    
+    // Console
+    if(console_)
+    {
+        std::string print_console = "Console> ";
+        print_console += console_command_;
+        sf::Text console(print_console.c_str(), font_);
+        console.setCharacterSize(20);
+        console.setPosition(sf::Vector2f(0, 100));
+        window_->draw(console);
+    }
     
     window_->display();
 }
@@ -299,6 +355,35 @@ std::string Wasteland::GetStatusLine()
     }
 
     return ret;
+}
+
+void Wasteland::DoCommand(const std::string& str)
+{
+    std::vector<std::string> strings = TokenizeString(str, ' ');
+    if(strings[0] == "changefood")
+    {
+        std::stringstream ss;
+        ss<<strings[1];
+        int32_t qty;
+        ss>>qty;
+        player_->ChangeFood(qty);
+        
+        console_command_ = "";
+    }
+    else if(strings[0] == "teleport")
+    {
+        sf::Vector2f position;
+        std::stringstream ss;
+        ss<<strings[1];
+        ss>>position.x;
+        ss.clear();
+        ss<<strings[2];
+        ss>>position.y;
+        
+        player_->SetPosition(position);
+        
+        console_command_ = "";
+    }
 }
 
 int main(int argc, char** argv)
