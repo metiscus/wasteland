@@ -317,14 +317,10 @@ void Wasteland::HandlePickup()
         return;
     }
 
-    auto itr = tile.objects.begin();
-    //while(itr != tile.objects.end())
+    tile.objects.erase(std::remove_if(tile.objects.begin(), tile.objects.end(), [this](ObjectPtr p)
     {
-        tile.objects.erase(std::remove_if(tile.objects.begin(), tile.objects.end(), [this](ObjectPtr p)
-        {
-            return player_->AddInventoryObject(p);
-        }));
-    }
+        return player_->AddInventoryObject(p);
+    }));
 }
 
 void Wasteland::UpdateMap()
