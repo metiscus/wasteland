@@ -1,13 +1,13 @@
-CC=gcc
-CXX=g++
-CFLAGS=-g -Wall -Wextra -std=gnu99
-CXXFLAGS=-g -Wall -Wextra --std=gnu++14 -Iextern
-LDFLAGS=
+CC=clang
+CXX=clang++
+CFLAGS=-g -Wall -Wextra -std=gnu99 -fsanitize=address
+CXXFLAGS=-g -Wall -Wextra --std=gnu++14 -Iextern -fsanitize=address
+LDFLAGS=-fsanitize=address
 
 .POSIX:
 
 SFML_LDFLAGS:=-lsfml-system -lsfml-window -lsfml-graphics
-CXXFLAGS += $(SFML_LDFLAGS)
+LDFLAGS += $(SFML_LDFLAGS)
 
 default: .POSIX wasteland
 
@@ -17,6 +17,7 @@ SRC:=\
 	map.cpp\
 	utility.cpp\
 	object.cpp\
+	levelgen.cpp\
 	extern/fov.c
 
 CXX_SRC=$(filter %.cpp,$(SRC))

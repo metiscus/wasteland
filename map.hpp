@@ -71,6 +71,10 @@ public:
     
     void AddCharacter(CharacterPtr ptr);
     void RemoveCharacter(CharacterPtr ptr);
+
+    void Resize(uint32_t x, uint32_t y);
 };
+
+typedef std::shared_ptr<Map> MapPtr;
 
 #endif

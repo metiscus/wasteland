@@ -276,3 +276,11 @@ void Map::RemoveCharacter(CharacterPtr ptr)
 {
     characters.erase(std::remove(characters.begin(), characters.end(), ptr), characters.end());
 }
+
+void Map::Resize(uint32_t x, uint32_t y)
+{
+    tiles.resize(x*y);
+    lit.resize(x*y);
+    width = x;
+    height = y;
+}
