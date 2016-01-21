@@ -39,11 +39,10 @@ private:
     sf::Font font_;
     
     float zoom_;
-    
-    uint32_t light_radius_;
-
     uint32_t turn_;
     bool console_;
+    uint32_t light_radius_;
+
     std::string console_command_;
 public:
     Wasteland();

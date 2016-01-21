@@ -361,6 +361,7 @@ std::string Wasteland::GetStatusLine()
     return ret;
 }
 
+//!\brief implements basic console commands for debugging
 void Wasteland::DoCommand(const std::string& str)
 {
     std::vector<std::string> strings = TokenizeString(str, ' ');
