@@ -13,7 +13,8 @@ Wasteland::Wasteland()
     , turn_(0)
 {
     window_ = std::make_unique<sf::RenderWindow>(sf::VideoMode(800, 600), "Wasteland");
-    
+   
+    //TODO: replace this debug art with something else
     auto red = std::make_shared<sf::Texture>();
     red->create(1,1);
     uint8_t red_b[] = { 255, 100, 100, 255 };
@@ -68,69 +69,74 @@ void Wasteland::Run()
 {
     while(!should_quit_)
     {
-        sf::Event event;
-        while (window_->pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-            {
-                should_quit_ = true;
-            }
-            
-            if (event.type == sf::Event::KeyPressed)
-            {
-                switch(event.key.code)
-                {
-                    case sf::Keyboard::Numpad4:
-                    case sf::Keyboard::A:
-                        HandlePlayerMovement(Player_MoveWest);
-                        break;
-                    case sf::Keyboard::Numpad2:
-                    case sf::Keyboard::S:
-                        HandlePlayerMovement(Player_MoveSouth);
-                        break;
-                    case sf::Keyboard::Numpad6:
-                    case sf::Keyboard::D:
-                        HandlePlayerMovement(Player_MoveEast);
-                        break;
-                    case sf::Keyboard::Numpad8:
-                    case sf::Keyboard::W:
-                        HandlePlayerMovement(Player_MoveNorth);
-                        break;
-                    case sf::Keyboard::Numpad3:
-                        HandlePlayerMovement(Player_MoveSouthEast);
-                        break;
-                    case sf::Keyboard::Numpad1:
-                        HandlePlayerMovement(Player_MoveSouthWest);
-                        break;
-                    case sf::Keyboard::Numpad9:
-                        HandlePlayerMovement(Player_MoveNorthEast);
-                        break;
-                    case sf::Keyboard::Numpad7:
-                        HandlePlayerMovement(Player_MoveNorthWest);
-                        break;
-                    case sf::Keyboard::Add:
-                        view_.zoom(0.9);
-                        break;
-                    case sf::Keyboard::Subtract:
-                        view_.zoom(1.111);
-                        break;
-                    default:
-                    {
-
-                    }
-                }
-                
-                //TODO: this is a hack
-                player_->ChangeFood(-1);
-            }
-        }
-
-        UpdateMap();
+        ProcessInput();
+		UpdateMap();
         Draw();
     }
     
     window_->close();
 }
+
+void Wasteland::ProcessInput()
+{
+	sf::Event event;
+	while (window_->pollEvent(event))
+	{
+		if (event.type == sf::Event::Closed)
+		{
+			should_quit_ = true;
+		}
+
+		if (event.type == sf::Event::KeyPressed)
+		{
+			switch(event.key.code)
+			{
+				case sf::Keyboard::Numpad4:
+				case sf::Keyboard::A:
+					HandlePlayerMovement(Player_MoveWest);
+					break;
+				case sf::Keyboard::Numpad2:
+				case sf::Keyboard::S:
+					HandlePlayerMovement(Player_MoveSouth);
+					break;
+				case sf::Keyboard::Numpad6:
+				case sf::Keyboard::D:
+					HandlePlayerMovement(Player_MoveEast);
+					break;
+				case sf::Keyboard::Numpad8:
+				case sf::Keyboard::W:
+					HandlePlayerMovement(Player_MoveNorth);
+					break;
+				case sf::Keyboard::Numpad3:
+					HandlePlayerMovement(Player_MoveSouthEast);
+					break;
+				case sf::Keyboard::Numpad1:
+					HandlePlayerMovement(Player_MoveSouthWest);
+					break;
+				case sf::Keyboard::Numpad9:
+					HandlePlayerMovement(Player_MoveNorthEast);
+					break;
+				case sf::Keyboard::Numpad7:
+					HandlePlayerMovement(Player_MoveNorthWest);
+					break;
+				case sf::Keyboard::Add:
+					view_.zoom(0.9);
+					break;
+				case sf::Keyboard::Subtract:
+					view_.zoom(1.111);
+					break;
+				default:
+					{
+
+					}
+			}
+
+			//TODO: this is a hack
+			player_->ChangeFood(-1);
+		}
+	}
+}
+
 
 void Wasteland::Draw()
 {

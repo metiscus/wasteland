@@ -45,7 +45,6 @@ public:
     Wasteland();
     
     void Run();
-    void Draw();
     void LoadMap(const std::string& filename);
     void LoadMap(std::shared_ptr<sf::Image> img);
     
@@ -54,6 +53,8 @@ private:
     void UpdateVisited();
     std::string GetStatusLine();
     void UpdateMap();
+    void ProcessInput();
+    void Draw();
 };
 
 #endif
