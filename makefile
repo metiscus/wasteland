@@ -1,5 +1,5 @@
-CC=clang
-CXX=clang++
+CC=gcc
+CXX=g++
 CFLAGS=-g -Wall -Wextra -std=gnu99 -fsanitize=address
 CXXFLAGS=-g -Wall -Wextra --std=gnu++14 -Iextern -fsanitize=address
 LDFLAGS=-fsanitize=address
