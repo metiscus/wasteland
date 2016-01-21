@@ -98,6 +98,10 @@ void Wasteland::ProcessInput()
                 //TODO: do this better
                 switch(event.key.code)
                 {
+                    case sf::Keyboard::Tilde:
+                        console_ = false;
+                        console_command_ = "";
+                        break;
                     case sf::Keyboard::Escape:
                         console_ = false;
                         break;
