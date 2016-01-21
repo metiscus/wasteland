@@ -14,6 +14,7 @@ Wasteland::Wasteland()
     , player_(new Character())
     , turn_(0)
     , console_(false)
+    , light_radius_(5)
 {
     window_ = std::make_unique<sf::RenderWindow>(sf::VideoMode(800, 600), "Wasteland");
    
@@ -312,7 +313,7 @@ void Wasteland::UpdateMap()
 void Wasteland::UpdateVisited()
 {
     auto pos = player_->GetPosition();
-    map_->UpdateLighting(pos.x, pos.y, 5);
+    map_->UpdateLighting(pos.x, pos.y, light_radius_);
 }
 
 void Wasteland::LoadMap(const std::string& filename)
@@ -364,7 +365,7 @@ void Wasteland::DoCommand(const std::string& str)
     {
         std::stringstream ss;
         ss<<strings[1];
-        int32_t qty;
+        int32_t qty = 0;
         ss>>qty;
         player_->ChangeFood(qty);
         
@@ -383,6 +384,20 @@ void Wasteland::DoCommand(const std::string& str)
         player_->SetPosition(position);
         
         console_command_ = "";
+    }
+    else if(strings[0] == "changelight")
+    {
+        std::stringstream ss;
+        ss<<strings[1];
+        uint32_t radius = light_radius_;
+        ss>>radius;
+        light_radius_ = radius;
+        
+        console_command_ = "";
+    }
+    else if(strings[0] == "quit")
+    {
+        should_quit_ = true;
     }
 }
 
