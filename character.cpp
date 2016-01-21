@@ -122,7 +122,7 @@ void Character::ChangeFood(int32_t food)
     food_ += food;
 }
 
-bool Character::AddInventoryItem(std::shared_ptr<Object> object)
+bool Character::AddInventoryObject(std::shared_ptr<Object> object)
 {
     uint32_t max_carry = strength_ * MaxInventoryWeightPerStrength;
     if(object->GetWeight() * object->GetQuantity() + inventory_weight_ > max_carry)
@@ -146,7 +146,7 @@ bool Character::AddInventoryItem(std::shared_ptr<Object> object)
     return true;
 }
 
-std::vector<std::shared_ptr<Object> > Character::GetInventoryItemsByType(ObjectType type)
+std::vector<std::shared_ptr<Object> > Character::GetInventoryObjectsByType(ObjectType type)
 {
     std::vector<std::shared_ptr<Object> > ret;
     ret.reserve(inventory_.size());
@@ -161,7 +161,7 @@ std::vector<std::shared_ptr<Object> > Character::GetInventoryItemsByType(ObjectT
     return ret;
 }
 
-void Character::RemoveInventoryItem(uint32_t id, uint32_t qty)
+void Character::RemoveInventoryObject(uint32_t id, uint32_t qty)
 {
     auto itr = inventory_.find(id); 
     if(itr != inventory_.end())

@@ -53,6 +53,7 @@ public:
     
 private:
     void HandlePlayerMovement(PlayerMovement action);
+    void HandlePickup();
     void UpdateVisited();
     std::string GetStatusLine();
     void UpdateMap();

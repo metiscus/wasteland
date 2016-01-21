@@ -2,6 +2,7 @@
 Wastelander is a roguelike game based in a post nuclear apocalyptic world
 * Sprint 1
 ** TODO As a user I can pick up items
+*** Map must hold items
 If I am unable to hold the item due to having too much weight it will not be picked up
 ** TODO As a user I can list the items in my inventory
 ** TODO As a user I can drop items on the ground

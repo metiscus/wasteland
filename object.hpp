@@ -24,11 +24,12 @@ typedef std::shared_ptr<Object> ObjectPtr;
 class Object final
 {
 private:
-    ObjectType type;
-    uint32_t uid;
-    uint32_t weight;
-    uint32_t quantity;
-    std::string name;
+    ObjectType type_;
+    uint32_t uid_;
+    uint32_t weight_;
+    uint32_t quantity_;
+    std::string name_;
+    uint32_t sprite_;
 
 public:
     Object();
@@ -40,6 +41,7 @@ public:
     std::string GetName() const;
     uint32_t GetWeight() const;
     uint32_t GetQuantity() const;
+    uint32_t GetSprite() const;
     
     void SetQuantity(uint32_t qty);
     void AddQuantity(uint32_t qty);

@@ -5,11 +5,12 @@
 
 Object::Object()
 {
-    uid = 0;
-    type = object_Invalid;
-    weight = 0;
-    quantity = 1;
-    name = "(invalid object)";
+    uid_ = 0;
+    type_ = object_Invalid;
+    weight_ = 0;
+    quantity_ = 1;
+    name_ = "(invalid object)";
+    sprite_ = 0;
 }
 
 ObjectPtr Object::BuildFromString(const std::string& str)
@@ -23,21 +24,21 @@ ObjectPtr Object::BuildFromString(const std::string& str)
         ss<<tokens[0];
         uint32_t tmp;
         ss>>tmp;
-        ret->type = (ObjectType)tmp;
+        ret->type_ = (ObjectType)tmp;
 
         ss.clear();
         ss<<tokens[1];
-        ss>>ret->uid;
+        ss>>ret->uid_;
         
         ss.clear();
         ss<<tokens[2];
-        ss>>ret->weight;
+        ss>>ret->weight_;
 
         ss.clear();
         ss<<tokens[3];
-        ss>>ret->quantity;
+        ss>>ret->quantity_;
         
-        ret->name = tokens[4];
+        ret->name_ = tokens[4];
     }
     
     return ret;
@@ -46,42 +47,47 @@ ObjectPtr Object::BuildFromString(const std::string& str)
 std::string Object::ToString() const
 {
     std::stringstream ss;
-    ss<<type<<","<<uid<<","<<weight<<","<<quantity<<","<<name;
+    ss<<type_<<","<<uid_<<","<<weight_<<","<<quantity_<<","<<name_<<","<<sprite_;
 
     return ss.str();
 }
 
 uint32_t Object::GetUID() const
 {
-    return uid;
+    return uid_;
 }
 
 ObjectType Object::GetType() const
 {
-    return type;
+    return type_;
 }
 
 std::string Object::GetName() const
 {
-    return name;
+    return name_;
 }
 
 uint32_t Object::GetWeight() const
 {
-    return weight;
+    return weight_;
 }
 
 uint32_t Object::GetQuantity() const
 {
-    return quantity;
+    return quantity_;
+}
+
+uint32_t Object::GetSprite() const
+{
+    return sprite_;
 }
 
 void Object::SetQuantity(uint32_t qty)
 {
-    quantity = qty;
+    quantity_ = qty;
 }
 
 void Object::AddQuantity(uint32_t qty)
 {
-    quantity += qty;
+    quantity_ += qty;
 }

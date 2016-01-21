@@ -64,9 +64,9 @@ Wasteland::Wasteland()
     
     font_.loadFromFile("data/font.ttf");
     
-    auto knife = Object::BuildFromString(std::string("4,1,10,1,Combat Knife"));
-    std::cerr<<knife->ToString()<<"\n";
-    player_->AddInventoryItem(knife);
+    //auto knife = Object::BuildFromString(std::string("4,1,10,1,Combat Knife"));
+    //std::cerr<<knife->ToString()<<"\n";
+    //player_->AddInventoryItem(knife);
 }
 
 void Wasteland::Run()
@@ -170,6 +170,10 @@ void Wasteland::ProcessInput()
                     case sf::Keyboard::Subtract:
                         view_.zoom(1.111);
                         break;
+                    case sf::Keyboard::G:
+                        // get/pick-up
+                        HandlePickup();
+                        break;
                     default:
                         {
 
@@ -205,6 +209,11 @@ void Wasteland::Draw()
                 if(tile.visited)
                 {
                     auto sprite = sprites_[(uint32_t)tile.type];
+                    //TODO: improve this
+                    if(tile.objects.size()>0)
+                    {
+                        sprite = sprites_[(uint32_t)(*tile.objects.begin())->GetSprite()];
+                    }
                     sprite->setPosition(sf::Vector2f(x*32, y*32));
                     if(!map_->GetLit(x,y))
                     {
@@ -295,6 +304,25 @@ void Wasteland::HandlePlayerMovement(PlayerMovement action)
     view_.setCenter(move_to_pos * 32.0f);
 }
 
+void Wasteland::HandlePickup()
+{
+    auto position = player_->GetPosition();
+    auto &tile = map_->Get((uint32_t)position.x, (uint32_t)position.y);
+    if(tile.objects.size() == 0)
+    {
+        return;
+    }
+
+    auto itr = tile.objects.begin();
+    //while(itr != tile.objects.end())
+    {
+        tile.objects.erase(std::remove_if(tile.objects.begin(), tile.objects.end(), [this](ObjectPtr p)
+        {
+            return player_->AddInventoryObject(p);
+        }));
+    }
+}
+
 void Wasteland::UpdateMap()
 {
     if(player_->GetFood() == 0)
@@ -338,6 +366,9 @@ void Wasteland::LoadMap(std::shared_ptr<sf::Image> img)
     map_->SetRadiation(10, 9, 0.5);
     map_->SetRadiation(11, 9, 0.25);
     map_->SetRadiation(12, 9, 0.1);
+    
+    auto obj = Object::BuildFromString(std::string("4,1,10,1,Combat Knife"));
+    map_->Get(3,4).objects.push_back(obj);
 }
 
 std::string Wasteland::GetStatusLine()

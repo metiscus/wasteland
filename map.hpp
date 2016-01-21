@@ -28,7 +28,7 @@ struct MapTile
     TileType type;
     bool visited;
     bool passable;
-    std::vector<ObjectPtr> objects;
+    std::list<ObjectPtr> objects;
     float radiation;
 };
 

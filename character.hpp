@@ -65,9 +65,9 @@ public:
     void SetFood(uint32_t food);
     void ChangeFood(int32_t food);
     
-    bool AddInventoryItem(std::shared_ptr<Object> object);
-    std::vector<std::shared_ptr<Object> > GetInventoryItemsByType(ObjectType type);
-    void RemoveInventoryItem(uint32_t id, uint32_t qty);
+    bool AddInventoryObject(std::shared_ptr<Object> object);
+    std::vector<std::shared_ptr<Object> > GetInventoryObjectsByType(ObjectType type);
+    void RemoveInventoryObject(uint32_t id, uint32_t qty);
 };
 
 
