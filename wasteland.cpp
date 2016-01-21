@@ -63,10 +63,6 @@ Wasteland::Wasteland()
     zoom_ = 1.0f;
     
     font_.loadFromFile("data/font.ttf");
-    
-    //auto knife = Object::BuildFromString(std::string("4,1,10,1,Combat Knife"));
-    //std::cerr<<knife->ToString()<<"\n";
-    //player_->AddInventoryItem(knife);
 }
 
 void Wasteland::Run()
@@ -123,7 +119,7 @@ void Wasteland::ProcessInput()
                         break;
 
                     default:
-                        if(event.key.code < sf::Keyboard::Num9 && event.key.code != sf::Keyboard::Unknown)
+                        if(event.key.code <= sf::Keyboard::Num9 && event.key.code != sf::Keyboard::Unknown)
                         {
                             std::string letters = "abcdefghijklmnopqrstuvwxyz0123456789";
                             console_command_ += letters[event.key.code];

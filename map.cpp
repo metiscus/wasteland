@@ -3,6 +3,10 @@
 #include <cassert>
 #include <iostream>
 #include <fstream>
+#include <rapidxml.hpp>
+#include <rapidxml_print.hpp>
+#include <rapidxml_utils.hpp>
+#include <boost/lexical_cast.hpp>
 
 MapTile::MapTile()
 {
@@ -12,53 +16,74 @@ MapTile::MapTile()
     radiation = 0.0f;
 }
 
+//TODO: there absolutely has to be a better way to handle this
+inline void DeserializeTile(const rapidxml::xml_node<> *tile_node, MapTile& tile)
+{
+    using namespace rapidxml;
+    using namespace boost;
+    assert(tile_node);
+    tile.type = (TileType)lexical_cast<uint32_t>(tile_node->first_attribute("type")->value());
+    tile.visited = lexical_cast<bool>(tile_node->first_attribute("visited")->value());
+    tile.passable = lexical_cast<bool>(tile_node->first_attribute("passable")->value());
+    tile.radiation = lexical_cast<float>(tile_node->first_attribute("radiation")->value());
+    //TODO: handle objects "cleanly"
+    //uint32_t objects = boost::lexical_cast<uint32_t>(tile_node->first_attribute("type")->value());
+}
+
+inline void SerializeTile(rapidxml::xml_node<> *map_node, const MapTile& tile)
+{
+    using namespace rapidxml;
+    using namespace boost;
+    
+    assert(map_node);
+    auto doc = map_node->document();
+    auto node = doc->allocate_node(node_element, doc->allocate_string("tile"));
+    map_node->append_node(node);
+    
+    auto type_str = doc->allocate_string(lexical_cast<std::string>((uint32_t)tile.type).c_str());
+    auto attr = doc->allocate_attribute(doc->allocate_string("type"), type_str);
+    node->append_attribute(attr);
+
+    auto visited_str = doc->allocate_string(lexical_cast<std::string>(tile.visited).c_str());
+    attr = doc->allocate_attribute(doc->allocate_string("visited"), visited_str);
+    node->append_attribute(attr);
+    
+    auto passable_str = doc->allocate_string(lexical_cast<std::string>(tile.passable).c_str());
+    attr = doc->allocate_attribute(doc->allocate_string("passable"), passable_str);
+    node->append_attribute(attr);
+    
+    auto radiation_str = doc->allocate_string(lexical_cast<std::string>(tile.radiation).c_str());
+    attr = doc->allocate_attribute(doc->allocate_string("radiation"), radiation_str);
+    node->append_attribute(attr);
+}
+
 std::shared_ptr<Map> Map::Load(const std::string& filename)
 {
-    auto ret = std::make_shared<Map>();
-    std::ifstream infile(filename.c_str());
-    if(infile.is_open())
-    {
-        infile>>ret->width;
-        infile>>ret->height;
-        ret->tiles.resize(ret->width*ret->height);
-        ret->lit.resize(ret->width*ret->height);
+    using namespace rapidxml;
+    using namespace boost;
 
-        uint32_t type, visited;
+    auto ret = std::make_shared<Map>();
+    
+    rapidxml::file<> infile(filename.c_str());
+    xml_document<> doc;
+    doc.parse<0>(infile.data());
+    
+    xml_node<> *map = doc.first_node("map");
+    if(map)
+    {
+        ret->width = lexical_cast<uint32_t>(map->first_attribute("width")->value());
+        ret->height = lexical_cast<uint32_t>(map->first_attribute("height")->value());
+        
+        ret->lit.resize(ret->width*ret->height);
+        ret->tiles.resize(ret->width*ret->height);
+        auto tileNode = map->first_node();
         for(uint32_t ii=0; ii<ret->width*ret->height; ++ii)
         {
-            infile>>type;
-            ret->tiles[ii].type = (TileType)type;
-            if((TileType)type >= tile_Count)
-            {
-                std::cerr<<"Saw an invalid tile type "<<type<<"\n";
-            }
-
-            infile>>visited;
-            ret->tiles[ii].visited = visited;
-            
-            //TODO: make this better
-            switch((TileType)type)
-            {
-                case tile_Ground:
-                case tile_Empty:
-                    ret->tiles[ii].passable = true;
-                    break;
-
-                case tile_Invalid:
-                case tile_Wall:
-                case tile_Water:
-                    ret->tiles[ii].passable = false;
-                    break;
-                    
-                default:
-                    assert(false);
-            }
-            
-            ret->lit[ii] = false;
+            DeserializeTile(tileNode, ret->tiles[ii]);
+            tileNode = tileNode->next_sibling();
         }
     }
-    infile.close();
-    
+
     return ret;
 }
 
@@ -198,17 +223,30 @@ void Map::SetRadiation(uint32_t x, uint32_t y, float radiation)
 
 void Map::Save(const char* filename) const
 {
+    using namespace rapidxml;
+    xml_document<> doc;
+    xml_node<> *root = doc.allocate_node(node_element, doc.allocate_string("map"));
+    doc.append_node(root);
+    
+    xml_attribute<> *attr = doc.allocate_attribute(doc.allocate_string("width"), boost::lexical_cast<std::string>(width).c_str());
+    root->append_attribute(attr);
+    
+    attr = doc.allocate_attribute(doc.allocate_string("height"), boost::lexical_cast<std::string>(height).c_str());
+    root->append_attribute(attr);
+    
     std::ofstream outfile(filename);
+    
     if(outfile.is_open())
     {
-        outfile<<width<<" ";
-        outfile<<height<<" ";
         for(uint32_t ii=0; ii<width*height; ++ii)
         {
-            outfile<<tiles[ii].type<<" ";
-            outfile<<tiles[ii].visited<<" ";
+            SerializeTile(root, tiles[ii]);
         }
     }
+    
+    std::string xml_as_string;
+    print(std::back_inserter(xml_as_string), doc);
+    outfile<<xml_as_string;
 }
     
 const MapTile& Map::Get(uint32_t x, uint32_t y) const

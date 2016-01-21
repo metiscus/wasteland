@@ -1,12 +1,15 @@
 CC=gcc
 CXX=g++
-CFLAGS=-g -Wall -Wextra -std=gnu99 -fsanitize=address
-CXXFLAGS=-g -Wall -Wextra --std=gnu++14 -Iextern -fsanitize=address
+CFLAGS=-gdwarf-4 -fvar-tracking-assignments -Wall -Wextra -std=gnu99 -fsanitize=address
+CXXFLAGS=-gdwarf-4 -fvar-tracking-assignments -Wall -Wextra --std=gnu++14 -Iextern -fsanitize=address
 LDFLAGS=-fsanitize=address
 
 .POSIX:
 
+RAPIDXML_FLAGS:= -Iextern/rapidxml-1.13
 SFML_LDFLAGS:=-lsfml-system -lsfml-window -lsfml-graphics
+
+CXXFLAGS += $(RAPIDXML_FLAGS)
 LDFLAGS += $(SFML_LDFLAGS)
 
 default: .POSIX wasteland
