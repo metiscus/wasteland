@@ -1,0 +1,21 @@
+* Concept
+Wastelander is a roguelike game based in a post nuclear apocalyptic world
+* Sprint 1
+** TODO As a user I can pick up items
+If I am unable to hold the item due to having too much weight it will not be picked up
+** TODO As a user I can list the items in my inventory
+** TODO As a user I can drop items on the ground
+** TODO As a user I can attack with an equipped weapon
+There will be several base weapon types that will have different mecnahics
+This story invloves creating the general/melee weapon base type
+** TODO As a user I can equip items in my inventory as weapons
+Items that do not have the weapon property will map to a generic weapon
+** TODO As a user I can unequip a weapon and it will return to my inventory
+** TODO As a user I can consume items in my inventory
+Items with either the food or drink flag will replenish the relevant nutrition scores
+** TODO As a designer I can create items and instance them in game
+Ideally from something like a spreadsheet
+** TODO As a designer I can create npc characters and instance them in game
+Ideally from something like a spreadsheet but xml might be okay here
+** TODO As a user I can interact with npc characters by attacking them
+* Sprint 2
