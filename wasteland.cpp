@@ -101,6 +101,9 @@ void Wasteland::ProcessInput()
                     case sf::Keyboard::Escape:
                         console_ = false;
                         break;
+                    case sf::Keyboard::Period:
+                        console_command_ += ".";
+                        break;
                     case sf::Keyboard::Space:
                         console_command_ += " ";
                         break;
@@ -385,7 +388,7 @@ void Wasteland::DoCommand(const std::string& str)
         
         console_command_ = "";
     }
-    else if(strings[0] == "changelight")
+    else if(strings[0] == "setlight")
     {
         std::stringstream ss;
         ss<<strings[1];
@@ -398,6 +401,16 @@ void Wasteland::DoCommand(const std::string& str)
     else if(strings[0] == "quit")
     {
         should_quit_ = true;
+    }
+    else if(strings[0] == "savemap")
+    {
+        map_->Save(strings[1].c_str());
+        console_command_ = "";
+    }
+    else if(strings[0] == "loadmap")
+    {
+        map_ = Map::Load(strings[1].c_str());
+        console_command_ = "";
     }
 }
 

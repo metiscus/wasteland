@@ -205,8 +205,8 @@ void Map::Save(const char* filename) const
         outfile<<height<<" ";
         for(uint32_t ii=0; ii<width*height; ++ii)
         {
-            outfile<<tiles[ii].type;
-            outfile<<tiles[ii].visited;
+            outfile<<tiles[ii].type<<" ";
+            outfile<<tiles[ii].visited<<" ";
         }
     }
 }
