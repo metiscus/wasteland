@@ -23,5 +23,5 @@ Ideally from something like a spreadsheet but xml might be okay here
 * Map/Object Handling
 The wasteland class will maintain a set of master objects loaded from the object save file. An object has a unique identifier.
 Map files and character files will contain the unique id of an item as well as a quantity.
-** TODO Remove the quantity field from objects
-** TODO Create an object instance class to contain the uid, reference and qty
+** DONE Remove the quantity field from objects
+** DONE Create an object instance class to contain the uid, reference and qty
