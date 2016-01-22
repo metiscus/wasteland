@@ -41,7 +41,6 @@ public:
         uint32_t uid_;
         uint32_t quantity_;
         ObjectPtr parent_;
-
     public:
         Instance(ObjectPtr obj, uint32_t qty = 1);
         
@@ -53,6 +52,7 @@ public:
 
         void SetQuantity(uint32_t qty);
         void ChangeQuantity(int32_t qty);
+        const std::string& GetName() const;
     };
 
     static ObjectPtr GetObject(uint32_t id);
@@ -63,7 +63,7 @@ public:
     
     uint32_t GetUID() const;
     ObjectType GetType() const;
-    std::string GetName() const;
+    const std::string& GetName() const;
     uint32_t GetWeight() const;
     uint32_t GetSprite() const;
 };

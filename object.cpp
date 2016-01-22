@@ -81,7 +81,7 @@ ObjectType Object::GetType() const
     return type_;
 }
 
-std::string Object::GetName() const
+const std::string& Object::GetName() const
 {
     return name_;
 }
@@ -139,4 +139,9 @@ void Object::Instance::ChangeQuantity(int32_t qty)
     {
         quantity_ += qty;
     }
+}
+
+const std::string& Object::Instance::GetName() const
+{
+    return parent_->GetName();
 }
