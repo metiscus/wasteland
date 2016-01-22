@@ -303,7 +303,7 @@ inline void DeserializeTile(const rapidxml::xml_node<> *tile_node, MapTile& tile
         uint32_t qty;
         uid = lexical_cast<uint32_t>(objectNode->first_attribute("uid")->value());
         qty = lexical_cast<uint32_t>(objectNode->first_attribute("quantity")->value());
-        tile.objects.push_back(Object::CreateInstance(Object::GetObject(uid), qty));
+        tile.objects.push_back(Object::CreateInstance(uid, qty));
     }
 }
 

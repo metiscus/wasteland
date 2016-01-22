@@ -57,7 +57,7 @@ public:
     static ObjectPtr GetObject(uint32_t id);
     static ObjectPtr BuildFromString(const std::string& str);
     std::string ToString() const;
-    static Instance CreateInstance(ObjectPtr obj, uint32_t qty);
+    static Instance CreateInstance(uint32_t id, uint32_t qty);
     
     
     uint32_t GetUID() const;

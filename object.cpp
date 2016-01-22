@@ -66,9 +66,9 @@ std::string Object::ToString() const
     return ss.str();
 }
 
-Object::Instance Object::CreateInstance(ObjectPtr obj, uint32_t qty)
+Object::Instance Object::CreateInstance(uint32_t id, uint32_t qty)
 {
-    return Object::Instance(obj, qty);
+    return Object::Instance(GetObject(id), qty);
 }
 
 uint32_t Object::GetUID() const

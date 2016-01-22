@@ -366,7 +366,7 @@ void Wasteland::LoadMap(std::shared_ptr<sf::Image> img)
     map_->SetRadiation(11, 9, 0.25);
     map_->SetRadiation(12, 9, 0.1);
     
-    auto instance = Object::CreateInstance(Object::GetObject(1), 1);
+    auto instance = Object::CreateInstance(1, 1);
     map_->Get(3,4).objects.push_back(instance);
 }
 
