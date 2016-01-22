@@ -32,6 +32,7 @@ private:
     std::string name_;
     uint32_t sprite_;
 
+    std::unordered_map<std::string, uint32_t> properties_;
     static std::unordered_map<uint32_t, ObjectPtr> objects_;
     Object();
 
@@ -66,6 +67,8 @@ public:
     const std::string& GetName() const;
     uint32_t GetWeight() const;
     uint32_t GetSprite() const;
+    uint32_t GetProperty(const std::string& name) const;
+    void SetProperty(const std::string& name, const uint32_t& value);
 };
 
 #endif

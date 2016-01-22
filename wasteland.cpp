@@ -65,8 +65,8 @@ Wasteland::Wasteland()
     
     font_.loadFromFile("data/font.ttf");
     
-    auto obj = Object::BuildFromString(std::string("4,1,10,2,Combat Knife"));
-    *obj;
+    Object::BuildFromString(std::string("3,1,10,2,Combat Knife,attack,5,range,1"));
+    Object::BuildFromString(std::string("1,2,10,0,Ration,nutrition,500"));
 }
 
 void Wasteland::Run()
@@ -484,6 +484,30 @@ void Wasteland::DoCommand(const std::string& str)
         player_->RemoveInventoryObject(id, qty);
 
         console_command_ = "";
+    }
+    else if(strings[0] == "createobj")
+    {
+        console_output_ = "";
+        uint32_t id = boost::lexical_cast<uint32_t>(strings[1]);
+        uint32_t x = boost::lexical_cast<uint32_t>(strings[2]);
+        uint32_t y = boost::lexical_cast<uint32_t>(strings[3]);
+        
+        auto obj = Object::CreateInstance(id, 1);
+        auto &tile = map_->Get(x, y);
+        tile.objects.push_back(obj);
+        
+        console_command_ = "";
+    }
+    else if(strings[0] == "consumeobj")
+    {
+        uint32_t id = boost::lexical_cast<uint32_t>(strings[1]);
+        auto obj = player_->GetInventoryObject(id);
+        if(obj.GetParent()->GetType() == object_Food && obj.GetQuantity() > 0)
+        {
+            uint32_t nutrition = obj.GetParent()->GetProperty("nutrition");
+            player_->ChangeFood((int32_t)nutrition);
+            player_->RemoveInventoryObject(id, 1);
+        }
     }
     else
     {

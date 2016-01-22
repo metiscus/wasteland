@@ -21,7 +21,8 @@ SRC:=\
 	utility.cpp\
 	object.cpp\
 	levelgen.cpp\
-	extern/fov.c
+	extern/fov.c\
+	extern/miniz.c
 
 CXX_SRC=$(filter %.cpp,$(SRC))
 C_SRC=$(filter %.c,$(SRC))

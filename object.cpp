@@ -1,6 +1,7 @@
 #include "object.hpp"
 #include "utility.hpp"
 
+#include <cassert>
 #include <sstream>
 
 std::unordered_map<uint32_t, ObjectPtr> Object::objects_;
@@ -31,7 +32,7 @@ ObjectPtr Object::BuildFromString(const std::string& str)
     std::vector<std::string> tokens = TokenizeString(str);
     std::stringstream ss;
     
-    if(tokens.size() == 5)
+    if(tokens.size() >= 5)
     {
         ss<<tokens[0];
         uint32_t tmp;
@@ -52,6 +53,15 @@ ObjectPtr Object::BuildFromString(const std::string& str)
         
         ret->name_ = tokens[4];
         
+        uint32_t value = 0;
+        for(uint32_t ii = 5; ii<tokens.size()-1; ii+=2)
+        {
+            ss.clear();
+            ss<<tokens[ii+1];
+            ss>>value;
+            ret->properties_.insert(std::make_pair(tokens[ii], value));
+        }
+        
         objects_.insert(std::make_pair(ret->uid_, ret));
     }
     
@@ -62,6 +72,10 @@ std::string Object::ToString() const
 {
     std::stringstream ss;
     ss<<type_<<","<<uid_<<","<<weight_<<","<<name_<<","<<sprite_;
+    for(auto itr : properties_)
+    {
+        ss<<","<<itr.first<<","<<itr.second;
+    }
 
     return ss.str();
 }
@@ -94,6 +108,34 @@ uint32_t Object::GetWeight() const
 uint32_t Object::GetSprite() const
 {
     return sprite_;
+}
+
+uint32_t Object::GetProperty(const std::string& name) const
+{
+    uint32_t val = 0;
+    auto itr = properties_.find(name);
+    if(itr!=properties_.end())
+    {
+        val = itr->second;
+    }
+    else
+    {
+        assert(false);
+    }
+    return val;
+}
+
+void Object::SetProperty(const std::string& name, const uint32_t& value)
+{
+    auto itr = properties_.find(name);
+    if(itr!=properties_.end())
+    {
+        itr->second = value;
+    }
+    else
+    {
+        properties_.insert(std::make_pair(name, value));
+    }
 }
 
 //////////[ Object::Instance ]//////////
