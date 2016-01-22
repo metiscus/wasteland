@@ -3,6 +3,7 @@
 #include "object.hpp"
 #include "utility.hpp"
 #include <sstream>
+#include <boost/lexical_cast.hpp>
 
 #include <SFML/Window.hpp>
 
@@ -256,6 +257,11 @@ void Wasteland::Draw()
         console.setCharacterSize(20);
         console.setPosition(sf::Vector2f(0, 100));
         window_->draw(console);
+        
+        sf::Text console_output(console_output_.c_str(), font_);
+        console_output.setCharacterSize(20);
+        console_output.setPosition(sf::Vector2f(50, 150));
+        window_->draw(console_output);
     }
     
     window_->display();
@@ -442,6 +448,46 @@ void Wasteland::DoCommand(const std::string& str)
     {
         map_ = Map::Load(strings[1].c_str());
         console_command_ = "";
+    }
+    else if(strings[0] == "showinv")
+    {
+        console_output_ = "";
+        for(uint32_t type = object_First; type < object_Count; ++type)
+        {
+            auto objects = player_->GetInventoryObjectsByType((ObjectType)type);
+            for(auto obj : objects)
+            {
+                std::stringstream ss;
+                ss<<obj.GetUID()<<" "<<obj.GetQuantity()<<" ";
+                ss<<obj.GetParent()->GetName()<<"\n";
+                
+                console_output_ += ss.str();
+            }
+        }
+        console_command_ = "";
+    }
+    else if(strings[0] == "dropinv")
+    {
+        console_output_ = "";
+        uint32_t id = boost::lexical_cast<uint32_t>(strings[1]);
+        uint32_t qty = 1;
+        if(strings.size() == 3)
+        {
+            qty = boost::lexical_cast<uint32_t>(strings[2]);
+        }
+        
+        auto obj = player_->GetInventoryObject(id);
+        
+        auto position = player_->GetPosition();
+        auto &tile = map_->Get((uint32_t)position.x, (uint32_t)position.y);
+        tile.objects.push_back(obj);
+        player_->RemoveInventoryObject(id, qty);
+
+        console_command_ = "";
+    }
+    else
+    {
+        console_output_ = "";
     }
 }
 

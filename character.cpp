@@ -162,6 +162,19 @@ std::vector<Object::Instance> Character::GetInventoryObjectsByType(ObjectType ty
     return ret;
 }
 
+Object::Instance Character::GetInventoryObject(uint32_t uid)
+{
+    auto itr = inventory_.find(uid);
+    if(itr == inventory_.end())
+    {
+        assert(false);
+    }
+    else
+    {
+        return itr->second;
+    }
+}
+
 void Character::RemoveInventoryObject(uint32_t id, uint32_t qty)
 {
     auto itr = inventory_.find(id); 

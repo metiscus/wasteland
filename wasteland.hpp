@@ -45,6 +45,7 @@ private:
     uint32_t light_radius_;
 
     std::string console_command_;
+    std::string console_output_;
 public:
     Wasteland();
     

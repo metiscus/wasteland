@@ -9,7 +9,8 @@
 enum ObjectType
 {
     object_Invalid,
-    object_Food,
+    object_First = 1,
+    object_Food = object_First,
     object_Water,
     object_Weapon,
     object_Armor,

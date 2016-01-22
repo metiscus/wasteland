@@ -67,6 +67,7 @@ public:
     
     bool AddInventoryObject(Object::Instance object);
     std::vector<Object::Instance> GetInventoryObjectsByType(ObjectType type);
+    Object::Instance GetInventoryObject(uint32_t uid);
     void RemoveInventoryObject(uint32_t id, uint32_t qty);
 };
 
