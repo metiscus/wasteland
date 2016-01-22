@@ -16,46 +16,8 @@ MapTile::MapTile()
     radiation = 0.0f;
 }
 
-//TODO: there absolutely has to be a better way to handle this
-inline void DeserializeTile(const rapidxml::xml_node<> *tile_node, MapTile& tile)
-{
-    using namespace rapidxml;
-    using namespace boost;
-    assert(tile_node);
-    tile.type = (TileType)lexical_cast<uint32_t>(tile_node->first_attribute("type")->value());
-    tile.visited = lexical_cast<bool>(tile_node->first_attribute("visited")->value());
-    tile.passable = lexical_cast<bool>(tile_node->first_attribute("passable")->value());
-    tile.radiation = lexical_cast<float>(tile_node->first_attribute("radiation")->value());
-    //TODO: handle objects "cleanly"
-    //uint32_t objects = boost::lexical_cast<uint32_t>(tile_node->first_attribute("type")->value());
-}
-
-inline void SerializeTile(rapidxml::xml_node<> *map_node, const MapTile& tile)
-{
-    using namespace rapidxml;
-    using namespace boost;
-    
-    assert(map_node);
-    auto doc = map_node->document();
-    auto node = doc->allocate_node(node_element, doc->allocate_string("tile"));
-    map_node->append_node(node);
-    
-    auto type_str = doc->allocate_string(lexical_cast<std::string>((uint32_t)tile.type).c_str());
-    auto attr = doc->allocate_attribute(doc->allocate_string("type"), type_str);
-    node->append_attribute(attr);
-
-    auto visited_str = doc->allocate_string(lexical_cast<std::string>(tile.visited).c_str());
-    attr = doc->allocate_attribute(doc->allocate_string("visited"), visited_str);
-    node->append_attribute(attr);
-    
-    auto passable_str = doc->allocate_string(lexical_cast<std::string>(tile.passable).c_str());
-    attr = doc->allocate_attribute(doc->allocate_string("passable"), passable_str);
-    node->append_attribute(attr);
-    
-    auto radiation_str = doc->allocate_string(lexical_cast<std::string>(tile.radiation).c_str());
-    attr = doc->allocate_attribute(doc->allocate_string("radiation"), radiation_str);
-    node->append_attribute(attr);
-}
+inline void DeserializeTile(const rapidxml::xml_node<> *tile_node, MapTile& tile);
+inline void SerializeTile(rapidxml::xml_node<> *map_node, const MapTile& tile);
 
 std::shared_ptr<Map> Map::Load(const std::string& filename)
 {
@@ -321,4 +283,67 @@ void Map::Resize(uint32_t x, uint32_t y)
     lit.resize(x*y);
     width = x;
     height = y;
+}
+
+//TODO: there absolutely has to be a better way to handle this
+inline void DeserializeTile(const rapidxml::xml_node<> *tile_node, MapTile& tile)
+{
+    using namespace rapidxml;
+    using namespace boost;
+    assert(tile_node);
+    tile.type = (TileType)lexical_cast<uint32_t>(tile_node->first_attribute("type")->value());
+    tile.visited = lexical_cast<bool>(tile_node->first_attribute("visited")->value());
+    tile.passable = lexical_cast<bool>(tile_node->first_attribute("passable")->value());
+    tile.radiation = lexical_cast<float>(tile_node->first_attribute("radiation")->value());
+
+    xml_node<> *objectNode = tile_node->first_node("object_instance");
+    for( ; objectNode != nullptr; objectNode = objectNode->next_sibling("object_instance"))
+    {
+        uint32_t uid;
+        uint32_t qty;
+        uid = lexical_cast<uint32_t>(objectNode->first_attribute("uid")->value());
+        qty = lexical_cast<uint32_t>(objectNode->first_attribute("quantity")->value());
+        tile.objects.push_back(Object::CreateInstance(Object::GetObject(uid), qty));
+    }
+}
+
+inline void SerializeTile(rapidxml::xml_node<> *map_node, const MapTile& tile)
+{
+    using namespace rapidxml;
+    using namespace boost;
+    
+    assert(map_node);
+    auto doc = map_node->document();
+    auto node = doc->allocate_node(node_element, doc->allocate_string("tile"));
+    map_node->append_node(node);
+    
+    auto type_str = doc->allocate_string(lexical_cast<std::string>((uint32_t)tile.type).c_str());
+    auto attr = doc->allocate_attribute(doc->allocate_string("type"), type_str);
+    node->append_attribute(attr);
+
+    auto visited_str = doc->allocate_string(lexical_cast<std::string>(tile.visited).c_str());
+    attr = doc->allocate_attribute(doc->allocate_string("visited"), visited_str);
+    node->append_attribute(attr);
+    
+    auto passable_str = doc->allocate_string(lexical_cast<std::string>(tile.passable).c_str());
+    attr = doc->allocate_attribute(doc->allocate_string("passable"), passable_str);
+    node->append_attribute(attr);
+    
+    auto radiation_str = doc->allocate_string(lexical_cast<std::string>(tile.radiation).c_str());
+    attr = doc->allocate_attribute(doc->allocate_string("radiation"), radiation_str);
+    node->append_attribute(attr);
+    
+    // Write out all object instances
+    for(auto itr : tile.objects)
+    {
+        auto instance = doc->allocate_node(node_element, doc->allocate_string("object_instance"));
+        node->append_node(instance);
+        auto uid_str = doc->allocate_string(lexical_cast<std::string>((uint32_t)itr.GetUID()).c_str());
+        auto uid_attr = doc->allocate_attribute(doc->allocate_string("uid"), uid_str);
+        instance->append_attribute(uid_attr);
+        
+        auto qty_str = doc->allocate_string(lexical_cast<std::string>((uint32_t)itr.GetQuantity()).c_str());
+        auto qty_attr = doc->allocate_attribute(doc->allocate_string("quantity"), qty_str);
+        instance->append_attribute(qty_attr);
+    }
 }

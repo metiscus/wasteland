@@ -31,7 +31,7 @@ class Character
     sf::Vector2f position_;
     sf::Vector2f facing_;
     uint32_t inventory_weight_;
-    std::unordered_map<uint32_t, std::shared_ptr<Object> > inventory_;
+    std::unordered_map<uint32_t, Object::Instance> inventory_;
     
     CharacterTraits traits_;
     
@@ -65,8 +65,8 @@ public:
     void SetFood(uint32_t food);
     void ChangeFood(int32_t food);
     
-    bool AddInventoryObject(std::shared_ptr<Object> object);
-    std::vector<std::shared_ptr<Object> > GetInventoryObjectsByType(ObjectType type);
+    bool AddInventoryObject(Object::Instance object);
+    std::vector<Object::Instance> GetInventoryObjectsByType(ObjectType type);
     void RemoveInventoryObject(uint32_t id, uint32_t qty);
 };
 

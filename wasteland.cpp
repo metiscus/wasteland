@@ -63,6 +63,9 @@ Wasteland::Wasteland()
     zoom_ = 1.0f;
     
     font_.loadFromFile("data/font.ttf");
+    
+    auto obj = Object::BuildFromString(std::string("4,1,10,2,Combat Knife"));
+    *obj;
 }
 
 void Wasteland::Run()
@@ -212,7 +215,7 @@ void Wasteland::Draw()
                     //TODO: improve this
                     if(tile.objects.size()>0)
                     {
-                        sprite = sprites_[(uint32_t)(*tile.objects.begin())->GetSprite()];
+                        sprite = sprites_[(uint32_t)(*tile.objects.begin()).GetParent()->GetSprite()];
                     }
                     sprite->setPosition(sf::Vector2f(x*32, y*32));
                     if(!map_->GetLit(x,y))
@@ -313,7 +316,7 @@ void Wasteland::HandlePickup()
         return;
     }
 
-    tile.objects.erase(std::remove_if(tile.objects.begin(), tile.objects.end(), [this](ObjectPtr p)
+    tile.objects.erase(std::remove_if(tile.objects.begin(), tile.objects.end(), [this](Object::Instance p)
     {
         return player_->AddInventoryObject(p);
     }));
@@ -363,8 +366,8 @@ void Wasteland::LoadMap(std::shared_ptr<sf::Image> img)
     map_->SetRadiation(11, 9, 0.25);
     map_->SetRadiation(12, 9, 0.1);
     
-    auto obj = Object::BuildFromString(std::string("4,1,10,1,Combat Knife"));
-    map_->Get(3,4).objects.push_back(obj);
+    auto instance = Object::CreateInstance(Object::GetObject(1), 1);
+    map_->Get(3,4).objects.push_back(instance);
 }
 
 std::string Wasteland::GetStatusLine()
