@@ -147,6 +147,17 @@ bool Character::AddInventoryObject(Object::Instance objecti)
     return true;
 }
 
+std::vector<Object::Instance> Character::GetInventory()
+{
+    std::vector<Object::Instance> ret;
+    ret.reserve(inventory_.size());
+    for(auto itr : inventory_)
+    {
+        ret.push_back(itr.second);
+    }
+    return ret;
+}
+
 std::vector<Object::Instance> Character::GetInventoryObjectsByType(ObjectType type)
 {
     std::vector<Object::Instance> ret;
