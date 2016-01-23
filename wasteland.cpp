@@ -168,9 +168,11 @@ void Wasteland::ProcessInput()
                     case sf::Keyboard::Numpad7:
                         HandlePlayerMovement(Player_MoveNorthWest);
                         break;
+                    case sf::Keyboard::Equal:
                     case sf::Keyboard::Add:
                         view_.zoom(0.9);
                         break;
+                    case sf::Keyboard::Dash:
                     case sf::Keyboard::Subtract:
                         view_.zoom(1.111);
                         break;

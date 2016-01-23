@@ -114,7 +114,7 @@ Map::Map()
     
     fov_settings_set_opacity_test_function(&fov_settings, opaque);
     fov_settings_set_apply_lighting_function(&fov_settings, apply_lighting);
-    fov_settings_set_shape(&fov_settings, FOV_SHAPE_OCTAGON);
+    //fov_settings_set_shape(&fov_settings, FOV_SHAPE_OCTAGON);
 }
 
 Map::~Map()
