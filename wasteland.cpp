@@ -21,6 +21,7 @@ Wasteland::Wasteland()
 
     CreateSprite(3, "data/person.png", sf::Vector2f(0.5, 0.5));
     CreateSprite(4, "data/combat_knife.png", sf::Vector2f(0.5, 0.5));
+    CreateSprite(5, "data/45_pistol.png", sf::Vector2f(0.5, 0.5));
 
     //TODO: replace this debug art with something else
     auto red = std::make_shared<sf::Texture>();
@@ -70,6 +71,7 @@ Wasteland::Wasteland()
 
     Object::BuildFromString(std::string("3,1,10,4,Combat Knife,attack,5,range,1"));
     Object::BuildFromString(std::string("1,2,10,0,Ration,nutrition,500"));
+    Object::BuildFromString(std::string("3,3,18,5,.45 Pistol,attack,15,range,80,ammo_cap,8,ammo_type,45"));
 }
 
 void Wasteland::CreateSprite(uint32_t id, const std::string& filename, const sf::Vector2f& scale)
