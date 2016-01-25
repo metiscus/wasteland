@@ -33,15 +33,15 @@ std::shared_ptr<Map> Map::Load(const std::string& filename)
     xml_node<> *map = doc.first_node("map");
     if(map)
     {
-        ret->width = lexical_cast<uint32_t>(map->first_attribute("width")->value());
-        ret->height = lexical_cast<uint32_t>(map->first_attribute("height")->value());
+        ret->width_ = lexical_cast<uint32_t>(map->first_attribute("width")->value());
+        ret->height_ = lexical_cast<uint32_t>(map->first_attribute("height")->value());
 
-        ret->lit.resize(ret->width*ret->height);
-        ret->tiles.resize(ret->width*ret->height);
+        ret->lit_.resize(ret->width_*ret->height_);
+        ret->tiles_.resize(ret->width_*ret->height_);
         auto tileNode = map->first_node();
-        for(uint32_t ii=0; ii<ret->width*ret->height; ++ii)
+        for(uint32_t ii=0; ii<ret->width_*ret->height_; ++ii)
         {
-            DeserializeTile(tileNode, ret->tiles[ii]);
+            DeserializeTile(tileNode, ret->tiles_[ii]);
             tileNode = tileNode->next_sibling();
         }
     }
@@ -53,10 +53,10 @@ std::shared_ptr<Map> Map::Load(std::shared_ptr<sf::Image> img)
 {
     auto ret = std::make_shared<Map>();
     sf::Vector2u size = img->getSize();
-    ret->tiles.resize(size.x*size.y);
-    ret->lit.resize(size.x*size.y);
-    ret->width = size.x;
-    ret->height= size.y;
+    ret->tiles_.resize(size.x*size.y);
+    ret->lit_.resize(size.x*size.y);
+    ret->width_ = size.x;
+    ret->height_= size.y;
 
     for(uint32_t yy=0; yy<size.y; ++yy)
     {
@@ -64,28 +64,28 @@ std::shared_ptr<Map> Map::Load(std::shared_ptr<sf::Image> img)
         {
             sf::Color pix = img->getPixel(xx, yy);
 
-            ret->tiles[xx+yy*size.x].visited = false;
+            ret->tiles_[xx+yy*size.x].visited = false;
 
             TileType type = (TileType)(uint32_t)pix.r;
 
-            ret->tiles[xx+yy*size.x].type = type;
+            ret->tiles_[xx+yy*size.x].type = type;
 
             //TODO: make this better
             switch(type)
             {
                 case tile_Ground:
                 case tile_Empty:
-                    ret->tiles[xx+yy*size.x].passable = true;
+                    ret->tiles_[xx+yy*size.x].passable = true;
                     break;
 
                 case tile_Wall:
                 case tile_Water:
-                    ret->tiles[xx+yy*size.x].passable = false;
+                    ret->tiles_[xx+yy*size.x].passable = false;
                     break;
 
                 default:
                     assert(false);
-                    ret->tiles[xx+yy*size.x].type = tile_Invalid;
+                    ret->tiles_[xx+yy*size.x].type = tile_Invalid;
             }
         }
     }
@@ -94,7 +94,7 @@ std::shared_ptr<Map> Map::Load(std::shared_ptr<sf::Image> img)
 
 Map::Map()
 {
-    fov_settings_init(&fov_settings);
+    fov_settings_init(&fov_settings_);
     auto apply_lighting = [] (void *map, int x, int y, int dx, int dy, void *src)
     {
         assert(map);
@@ -112,21 +112,21 @@ Map::Map()
         return pMap->IsOpaque(x,y);
     };
 
-    fov_settings_set_opacity_test_function(&fov_settings, opaque);
-    fov_settings_set_apply_lighting_function(&fov_settings, apply_lighting);
-    //fov_settings_set_shape(&fov_settings, FOV_SHAPE_OCTAGON);
+    fov_settings_set_opacity_test_function(&fov_settings_, opaque);
+    fov_settings_set_apply_lighting_function(&fov_settings_, apply_lighting);
+    //fov_settings_set_shape(&fov_settings_, FOV_SHAPE_OCTAGON);
 }
 
 Map::~Map()
 {
-    fov_settings_free(&fov_settings);
+    fov_settings_free(&fov_settings_);
 }
 
 bool Map::IsPassable(uint32_t x, uint32_t y) const
 {
     if(OnMap(x,y))
     {
-        TileType type = tiles[x+y*width].type;
+        TileType type = tiles_[x+y*width_].type;
         switch(type)
         {
             case tile_Ground:
@@ -151,7 +151,7 @@ bool Map::IsOpaque(uint32_t x, uint32_t y) const
 {
     if(OnMap(x,y))
     {
-        TileType type = tiles[x+y*width].type;
+        TileType type = tiles_[x+y*width_].type;
         switch(type)
         {
             case tile_Water:
@@ -175,12 +175,12 @@ bool Map::IsOpaque(uint32_t x, uint32_t y) const
 
 float Map::GetRadiation(uint32_t x, uint32_t y) const
 {
-    return tiles[x+y*width].radiation;
+    return tiles_[x+y*width_].radiation;
 }
 
 void Map::SetRadiation(uint32_t x, uint32_t y, float radiation)
 {
-    tiles[x+y*width].radiation = radiation;
+    tiles_[x+y*width_].radiation = radiation;
 }
 
 void Map::Save(const char* filename) const
@@ -190,101 +190,135 @@ void Map::Save(const char* filename) const
     xml_node<> *root = doc.allocate_node(node_element, doc.allocate_string("map"));
     doc.append_node(root);
 
-    xml_attribute<> *attr = doc.allocate_attribute(doc.allocate_string("width"), boost::lexical_cast<std::string>(width).c_str());
+    xml_attribute<> *attr = doc.allocate_attribute(doc.allocate_string("width"), boost::lexical_cast<std::string>(width_).c_str());
     root->append_attribute(attr);
 
-    attr = doc.allocate_attribute(doc.allocate_string("height"), boost::lexical_cast<std::string>(height).c_str());
+    attr = doc.allocate_attribute(doc.allocate_string("height"), boost::lexical_cast<std::string>(height_).c_str());
     root->append_attribute(attr);
 
     std::ofstream outfile(filename);
 
     if(outfile.is_open())
     {
-        for(uint32_t ii=0; ii<width*height; ++ii)
+        for(uint32_t ii=0; ii<width_*height_; ++ii)
         {
-            SerializeTile(root, tiles[ii]);
+            SerializeTile(root, tiles_[ii]);
         }
     }
 
     std::string xml_as_string;
-    print(std::back_inserter(xml_as_string), doc);
     outfile<<xml_as_string;
 }
 
 const MapTile& Map::Get(uint32_t x, uint32_t y) const
 {
-    return tiles[x+y*width];
+    return tiles_[x+y*width_];
 }
 
 MapTile& Map::Get(uint32_t x, uint32_t y)
 {
-    return tiles[x+y*width];
+    return tiles_[x+y*width_];
 }
 
 uint32_t Map::GetWidth() const
 {
-    return width;
+    return width_;
 }
 
 uint32_t Map::GetHeight() const
 {
-    return height;
+    return height_;
 }
 
 bool Map::OnMap(uint32_t x, uint32_t y) const
 {
-    if(x<width && y<height)
+    if(x<width_ && y<height_)
         return true;
     return false;
 }
 
 void Map::SetLit(uint32_t x, uint32_t y, bool lit)
 {
-    this->lit[x+y*width] = lit;
+    this->lit_[x+y*width_] = lit;
     if(lit)
     {
-        tiles[x+y*width].visited = true;
+        tiles_[x+y*width_].visited = true;
     }
 }
 
 bool Map::GetLit(uint32_t x, uint32_t y) const
 {
-    return lit[x+y*width];
+    return lit_[x+y*width_];
 }
 
 void Map::UpdateLighting(uint32_t x, uint32_t y, uint32_t radius)
 {
-    for(uint32_t ii=0; ii<width*height; ++ii)
+    for(uint32_t ii=0; ii<width_*height_; ++ii)
     {
-        lit[ii] = false;
+        lit_[ii] = false;
     }
 
-    fov_circle(&fov_settings, this, NULL, x, y, radius);
+    fov_circle(&fov_settings_, this, NULL, x, y, radius);
 
-    lit[x + y*width] = true;
+    lit_[x + y*width_] = true;
+}
+
+std::vector<bool> Map::ComputeLighting(uint32_t x, uint32_t y, uint32_t radius)
+{
+    std::vector<bool> ret(width_*height_, false);
+    fov_settings_type fov_settings;
+    fov_settings_init(&fov_settings);
+
+    auto opaque = [] (void *map, int x, int y)
+    {
+        assert(map);
+        Map* pMap = (Map*)map;
+        return pMap->IsOpaque(x,y);
+    };
+
+    fov_settings_set_opacity_test_function(&fov_settings, opaque);
+
+    auto apply_lighting = [] (void *map, int x, int y, int dx, int dy, void *src)
+    {
+        assert(map);
+        Map* pMap = (Map*)map;
+        uint32_t width = pMap->GetWidth();
+        std::vector<bool>* pVec = (std::vector<bool>*)src;
+        (*pVec)[x + y * width] = true;
+    };
+    
+    fov_settings_set_apply_lighting_function(&fov_settings, apply_lighting);
+    fov_settings_set_shape(&fov_settings, FOV_SHAPE_OCTAGON);
+    
+    fov_circle(&fov_settings, this, &ret, x, y, radius);
+    
+    
+    fov_settings_free(&fov_settings);
+    
+    return ret;
 }
 
 std::list<CharacterPtr>& Map::GetCharacters()
 {
-    return characters;
+    return characters_;
 }
 
 void Map::AddCharacter(CharacterPtr ptr)
 {
-    characters.push_back(ptr);
+    characters_.push_back(ptr);
 }
 
 void Map::RemoveCharacter(CharacterPtr ptr)
 {
-    characters.erase(std::remove(characters.begin(), characters.end(), ptr), characters.end());
+    characters_.erase(std::remove(characters_.begin(), characters_.end(), ptr), characters_.end());
 }
 
 void Map::Resize(uint32_t x, uint32_t y)
 {
-    tiles.resize(x*y);
-    lit.resize(x*y);
-    width = x;
-    height = y;
+    tiles_.resize(x*y);
+    lit_.resize(x*y);
+    width_ = x;
+    height_ = y;
 }
 
 //TODO: there absolutely has to be a better way to handle this

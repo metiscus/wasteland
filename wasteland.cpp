@@ -15,7 +15,8 @@ Wasteland::Wasteland()
     , player_(new Character())
     , turn_(0)
     , console_(false)
-    , light_radius_(5)
+    , light_radius_(10)
+    , step_(false)
 {
     window_ = std::make_unique<sf::RenderWindow>(sf::VideoMode(800, 600), "Wasteland");
 
@@ -97,6 +98,7 @@ void Wasteland::Run()
         ProcessInput();
         UpdateMap();
         Draw();
+        step_ = false;
     }
 
     window_->close();
@@ -209,6 +211,8 @@ void Wasteland::ProcessInput()
 
                 //TODO: this is a hack
                 player_->ChangeFood(-1);
+                
+                step_ = true;
             }
         }
     }
@@ -384,6 +388,46 @@ void Wasteland::UpdateMap()
         std::cerr<<"Game Over!\n";
         should_quit_ = true;
     }
+    
+    //TODO: move the logic for character AI out of here once I know what the api will look like
+    if(map_ && step_)
+    {
+        auto characters = map_->GetCharacters();
+        for(auto chr : characters)
+        {
+            if(chr->GetTraits().beast == 1)
+            {
+                // do beast ai which in this case is just simple pursuit
+                auto player_pos = player_->GetPosition();
+                auto my_pos = chr->GetPosition();
+                std::vector<bool> litMap = map_->ComputeLighting(my_pos.x, my_pos.y, chr->GetViewRange());
+                if(litMap[player_pos.x + player_pos.y*map_->GetWidth()])
+                {
+                    // we can see the player
+                    auto toPlayer = player_pos - my_pos;
+                    float distance = sqrtf(toPlayer.x*toPlayer.x + toPlayer.y*toPlayer.y) + 0.001f;
+                    toPlayer /= distance;
+                    //rework this for ranged
+                    if(distance < 2)
+                    {
+                        // we're close to the player
+                        // for now do nothing
+                    }
+                    else
+                    {
+                        auto move_to = my_pos + toPlayer;
+                        // try to move
+                        if(map_->IsPassable(move_to.x, move_to.y))
+                        {
+                            chr->SetPosition(move_to);
+                            chr->SetFacing(toPlayer);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 }
 
 void Wasteland::UpdateVisited()
@@ -402,6 +446,7 @@ void Wasteland::LoadMap(std::shared_ptr<sf::Image> img)
     map_ = Map::Load(img);
 
     //testing
+    //TODO: replace with an actual generated level soon
     map_->SetRadiation(10, 10, 0.5);
     map_->SetRadiation(11, 10, 0.25);
     map_->SetRadiation(12, 10, 0.1);

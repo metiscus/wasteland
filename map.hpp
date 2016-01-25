@@ -35,13 +35,13 @@ struct MapTile
 class Map final
 {
 private:
-    uint32_t width;
-    uint32_t height;
-    std::vector<MapTile> tiles;
-    std::vector<bool> lit;
-    std::list<CharacterPtr> characters;
+    uint32_t width_;
+    uint32_t height_;
+    std::vector<MapTile> tiles_;
+    std::vector<bool> lit_;
+    std::list<CharacterPtr> characters_;
 
-    fov_settings_type fov_settings;
+    fov_settings_type fov_settings_;
 public:
     Map();
     ~Map();
@@ -61,6 +61,7 @@ public:
     uint32_t GetHeight() const;
     
     void UpdateLighting(uint32_t x, uint32_t y, uint32_t radius);
+    std::vector<bool> ComputeLighting(uint32_t x, uint32_t y, uint32_t radius);
     void SetLit(uint32_t x, uint32_t y, bool lit);
     void SetRadiation(uint32_t x, uint32_t y, float radiation);
     

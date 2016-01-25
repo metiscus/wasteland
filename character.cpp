@@ -13,6 +13,7 @@ Character::Character()
     name_ = std::string("(invalid character)");
     inventory_weight_ = 0;
     facing_ = sf::Vector2f(0., 1.);
+    view_range_ = 10;
 
     traits_.can_swim = 1;
     traits_.needs_food = 1;
@@ -186,6 +187,16 @@ Object::Instance Character::GetInventoryObject(uint32_t uid)
     {
         return itr->second;
     }
+}
+
+uint32_t Character::GetViewRange() const
+{
+    return view_range_;
+}
+
+void Character::SetViewRange(uint32_t range)
+{
+    view_range_ = range;
 }
 
 void Character::RemoveInventoryObject(uint32_t id, uint32_t qty)

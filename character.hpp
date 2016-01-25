@@ -28,6 +28,7 @@ class Character
     uint32_t max_health_;
     uint32_t radiation_;
     uint32_t food_;
+    uint32_t view_range_;
     std::string name_;
     sf::Vector2f position_;
     sf::Vector2f facing_;
@@ -52,6 +53,7 @@ public:
     CharacterTraits GetTraits() const;
     uint32_t GetFood() const;
     uint32_t GetSpriteId() const;
+    uint32_t GetViewRange() const;
 
     void Move(const sf::Vector2f& vec);
 
@@ -64,6 +66,7 @@ public:
     void SetRadiation(uint32_t rad);
     void SetTraits(const CharacterTraits& traits);
     void SetFood(uint32_t food);
+    void SetViewRange(uint32_t range);
     void ChangeFood(int32_t food);
 
     bool AddInventoryObject(Object::Instance object);

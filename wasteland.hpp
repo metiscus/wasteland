@@ -44,6 +44,8 @@ private:
 
     std::string console_command_;
     std::string console_output_;
+    
+    bool step_;
 public:
     Wasteland();
 
