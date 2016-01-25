@@ -22,6 +22,7 @@ Wasteland::Wasteland()
     CreateSprite(3, "data/person.png", sf::Vector2f(0.5, 0.5));
     CreateSprite(4, "data/combat_knife.png", sf::Vector2f(0.5, 0.5));
     CreateSprite(5, "data/45_pistol.png", sf::Vector2f(0.5, 0.5));
+    CreateSprite(6, "data/wild_dog.png", sf::Vector2f(0.5, 0.5f));
 
     //TODO: replace this debug art with something else
     auto red = std::make_shared<sf::Texture>();
@@ -259,7 +260,24 @@ void Wasteland::Draw()
         }
     }
 
-    //TODO: draw characters from map as well
+    if(map_)
+    {
+        auto characters = map_->GetCharacters();
+        for(auto chr : characters)
+        {
+            if(map_->GetLit(chr->GetPosition().x, chr->GetPosition().y))
+            {
+                uint32_t id = chr->GetSpriteId();
+                sprites_[id]->setPosition(chr->GetPosition() * 32.0f + sf::Vector2f(16, 16));
+                sprites_[id]->setOrigin(sf::Vector2f(32,32));
+                auto facing = chr->GetFacing();
+                sprites_[id]->setRotation(180.0 / 3.14159 * atan2(facing.x, -facing.y));
+
+                window_->draw(*sprites_[id]);
+            }
+        }
+    }
+
     //TODO: draw projectiles from world
     sprites_[3]->setPosition(player_->GetPosition() * 32.0f + sf::Vector2f(16, 16));
     sprites_[3]->setOrigin(sf::Vector2f(32,32));
@@ -366,15 +384,6 @@ void Wasteland::UpdateMap()
         std::cerr<<"Game Over!\n";
         should_quit_ = true;
     }
-
-    if(map_)
-    {
-        auto characters = map_->GetCharacters();
-        for(auto chr : characters)
-        {
-
-        }
-    }
 }
 
 void Wasteland::UpdateVisited()
@@ -405,6 +414,14 @@ void Wasteland::LoadMap(std::shared_ptr<sf::Image> img)
 
     auto instance = Object::CreateInstance(1, 1);
     map_->Get(3,4).objects.push_back(instance);
+
+    auto dog = std::make_shared<Character>();
+    dog->SetPosition(sf::Vector2f(10, 2));
+    dog->SetSpriteId(6);
+    CharacterTraits traits;
+    traits.beast = 1;
+    dog->SetTraits(traits);
+    map_->AddCharacter(dog);
 }
 
 std::string Wasteland::GetStatusLine()

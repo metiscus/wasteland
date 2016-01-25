@@ -12,14 +12,16 @@ Character::Character()
     radiation_ = 0;
     name_ = std::string("(invalid character)");
     inventory_weight_ = 0;
-    
+    facing_ = sf::Vector2f(0., 1.);
+
     traits_.can_swim = 1;
     traits_.needs_food = 1;
+    traits_.beast = 0;
 }
 
 Character::~Character()
 {
-    
+
 }
 
 const std::string&  Character::GetName() const
@@ -188,7 +190,7 @@ Object::Instance Character::GetInventoryObject(uint32_t uid)
 
 void Character::RemoveInventoryObject(uint32_t id, uint32_t qty)
 {
-    auto itr = inventory_.find(id); 
+    auto itr = inventory_.find(id);
     if(itr != inventory_.end())
     {
         // decrement the quantity or possibly remove the object

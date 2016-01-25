@@ -14,7 +14,8 @@ struct CharacterTraits
 {
     uint64_t needs_food : 1;
     uint64_t can_swim : 1;
-    uint64_t padding : 63;
+    uint64_t beast : 1;
+    uint64_t padding : 62;
 };
 
 class Character;
@@ -32,16 +33,16 @@ class Character
     sf::Vector2f facing_;
     uint32_t inventory_weight_;
     std::unordered_map<uint32_t, Object::Instance> inventory_;
-    
+
     CharacterTraits traits_;
-    
+
     uint32_t sprite_id_;
 
 
 public:
     Character();
     ~Character();
-    
+
     const std::string&  GetName() const;
     const sf::Vector2f& GetPosition() const;
     const sf::Vector2f& GetFacing() const;
@@ -64,7 +65,7 @@ public:
     void SetTraits(const CharacterTraits& traits);
     void SetFood(uint32_t food);
     void ChangeFood(int32_t food);
-    
+
     bool AddInventoryObject(Object::Instance object);
     std::vector<Object::Instance> GetInventory();
     std::vector<Object::Instance> GetInventoryObjectsByType(ObjectType type);
