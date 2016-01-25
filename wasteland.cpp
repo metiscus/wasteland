@@ -18,7 +18,14 @@ Wasteland::Wasteland()
     , light_radius_(5)
 {
     window_ = std::make_unique<sf::RenderWindow>(sf::VideoMode(800, 600), "Wasteland");
-   
+
+    auto playerTex = std::make_shared<sf::Texture>();
+    if(!playerTex->loadFromFile("data/person.png"))
+    {
+        std::cerr<<"Failed to load person texture\n";
+    }
+    textures_[3] = playerTex;
+
     //TODO: replace this debug art with something else
     auto red = std::make_shared<sf::Texture>();
     red->create(1,1);
@@ -33,38 +40,43 @@ Wasteland::Wasteland()
     green->update(green_b);
     green->setRepeated(true);
     textures_[1] = green;
-    
+
     auto blue = std::make_shared<sf::Texture>();
     blue->create(1,1);
     uint8_t blue_b[] = { 200, 200, 200, 255 };
     blue->update(blue_b);
     blue->setRepeated(true);
     textures_[2] = blue;
-    
+
     auto reds = std::make_shared<sf::Sprite>();
     reds->setTexture(*red);
     reds->setScale(sf::Vector2f(32.0f, 32.0f));
     sprites_[0] = reds;
-    
+
     auto blues = std::make_shared<sf::Sprite>();
     blues->setTexture(*blue);
     blues->setScale(sf::Vector2f(32.0f, 32.0f));
     sprites_[2] = blues;
-    
+
     auto greens = std::make_shared<sf::Sprite>();
     greens->setTexture(*green);
     greens->setScale(sf::Vector2f(32.0f, 32.0f));
     sprites_[1] = greens;
-    
+
+    auto players = std::make_shared<sf::Sprite>();
+    players->setTexture(*playerTex);
+    players->scale(sf::Vector2f(0.5f, 0.5f));
+    sprites_[3] = players;
+
     player_->SetPosition(sf::Vector2f(1.0, 1.0));
-    
+
     view_.setCenter(player_->GetPosition());
     window_->setView(view_);
-    
+
     zoom_ = 1.0f;
-    
+
     font_.loadFromFile("data/font.ttf");
-    
+
     Object::BuildFromString(std::string("3,1,10,2,Combat Knife,attack,5,range,1"));
     Object::BuildFromString(std::string("1,2,10,0,Ration,nutrition,500"));
 }
@@ -77,7 +89,7 @@ void Wasteland::Run()
         UpdateMap();
         Draw();
     }
-    
+
     window_->close();
 }
 
@@ -200,13 +212,13 @@ void Wasteland::Draw()
         return;
 
     window_->clear(sf::Color::Black);
-    
+
     window_->setView(view_);
-    
+
     if(map_)
     {
         UpdateVisited();
-        
+
         for(uint32_t y = 0; y<map_->GetHeight(); ++y)
         {
             for(uint32_t x = 0; x<map_->GetWidth(); ++x)
@@ -234,22 +246,24 @@ void Wasteland::Draw()
             }
         }
     }
-    
+
     //TODO: draw characters from map as well
     //TODO: draw projectiles from world
-    
-    sprites_[0]->setPosition(player_->GetPosition() * 32.0f);
-    window_->draw(*sprites_[0]);
-    
-    
+    sprites_[3]->setPosition(player_->GetPosition() * 32.0f + sf::Vector2f(16, 16));
+    sprites_[3]->setOrigin(sf::Vector2f(32,32));
+    auto facing = player_->GetFacing();
+    sprites_[3]->setRotation(180.0 / 3.14159 * atan2(facing.x, -facing.y));
+
+    window_->draw(*sprites_[3]);
+
     /// Print text elements
     window_->setView(text_view_);
-    
+
     // Status line
     sf::Text position(GetStatusLine().c_str(), font_);
     position.setCharacterSize(20);
     window_->draw(position);
-    
+
     // Console
     if(console_)
     {
@@ -259,13 +273,13 @@ void Wasteland::Draw()
         console.setCharacterSize(20);
         console.setPosition(sf::Vector2f(0, 100));
         window_->draw(console);
-        
+
         sf::Text console_output(console_output_.c_str(), font_);
         console_output.setCharacterSize(20);
         console_output.setPosition(sf::Vector2f(50, 150));
         window_->draw(console_output);
     }
-    
+
     window_->display();
 }
 
@@ -273,34 +287,36 @@ void Wasteland::HandlePlayerMovement(PlayerMovement action)
 {
     ++turn_;
     auto move_to_pos = player_->GetPosition();
+    sf::Vector2f offset;
     switch(action)
     {
         case Player_MoveNorth:
-            move_to_pos += sf::Vector2f(0.0, -1.0);
+            offset = sf::Vector2f(0.0, -1.0);
             break;
         case Player_MoveEast:
-            move_to_pos += sf::Vector2f(1.0, 0.0);
+            offset = sf::Vector2f(1.0, 0.0);
             break;
         case Player_MoveSouth:
-            move_to_pos += sf::Vector2f(0.0, 1.0);
+            offset = sf::Vector2f(0.0, 1.0);
             break;
         case Player_MoveWest:
-            move_to_pos += sf::Vector2f(-1.0, 0.0);
+            offset = sf::Vector2f(-1.0, 0.0);
             break;
         case Player_MoveNorthWest:
-            move_to_pos += sf::Vector2f(-1.0, -1.0);
+            offset = sf::Vector2f(-1.0, -1.0);
             break;
         case Player_MoveNorthEast:
-            move_to_pos += sf::Vector2f(1.0, -1.0);
+            offset = sf::Vector2f(1.0, -1.0);
             break;
         case Player_MoveSouthWest:
-            move_to_pos += sf::Vector2f(-1.0, 1.0);
+            offset = sf::Vector2f(-1.0, 1.0);
             break;
         case Player_MoveSouthEast:
-            move_to_pos += sf::Vector2f(1.0, 1.0);
+            offset = sf::Vector2f(1.0, 1.0);
             break;
     }
-    
+    move_to_pos += offset;
+
     auto &tile = map_->Get(move_to_pos.x, move_to_pos.y);
     if(!tile.passable)
     {
@@ -309,8 +325,9 @@ void Wasteland::HandlePlayerMovement(PlayerMovement action)
     else
     {
         tile.visited = true;
+        player_->SetFacing(offset);
     }
-    
+
     player_->SetPosition(move_to_pos);
     view_.setCenter(move_to_pos * 32.0f);
 }
@@ -343,7 +360,7 @@ void Wasteland::UpdateMap()
         auto characters = map_->GetCharacters();
         for(auto chr : characters)
         {
-            
+
         }
     }
 }
@@ -362,7 +379,7 @@ void Wasteland::LoadMap(const std::string& filename)
 void Wasteland::LoadMap(std::shared_ptr<sf::Image> img)
 {
     map_ = Map::Load(img);
-    
+
     //testing
     map_->SetRadiation(10, 10, 0.5);
     map_->SetRadiation(11, 10, 0.25);
@@ -373,7 +390,7 @@ void Wasteland::LoadMap(std::shared_ptr<sf::Image> img)
     map_->SetRadiation(10, 9, 0.5);
     map_->SetRadiation(11, 9, 0.25);
     map_->SetRadiation(12, 9, 0.1);
-    
+
     auto instance = Object::CreateInstance(1, 1);
     map_->Get(3,4).objects.push_back(instance);
 }
@@ -381,16 +398,16 @@ void Wasteland::LoadMap(std::shared_ptr<sf::Image> img)
 std::string Wasteland::GetStatusLine()
 {
     char buffer[1000];
-    sprintf(buffer, "Turn:%5d Position:(%3d, %3d) HP:(%3d/%3d)", 
+    sprintf(buffer, "Turn:%5d Position:(%3d, %3d) HP:(%3d/%3d)",
         turn_,
         (uint32_t)player_->GetPosition().x,
         (uint32_t)player_->GetPosition().y,
         (uint32_t)player_->GetHealth(),
         (uint32_t)player_->GetMaxHealth()
     );
-    
+
     std::string ret = buffer;
-    
+
     if(player_->GetFood() < 500)
     {
         ret += " HUNGRY";
@@ -410,7 +427,7 @@ void Wasteland::DoCommand(const std::string& str)
         int32_t qty = 0;
         ss>>qty;
         player_->ChangeFood(qty);
-        
+
         console_command_ = "";
     }
     else if(strings[0] == "teleport")
@@ -422,9 +439,9 @@ void Wasteland::DoCommand(const std::string& str)
         ss.clear();
         ss<<strings[2];
         ss>>position.y;
-        
+
         player_->SetPosition(position);
-        
+
         console_command_ = "";
     }
     else if(strings[0] == "setlight")
@@ -434,7 +451,7 @@ void Wasteland::DoCommand(const std::string& str)
         uint32_t radius = light_radius_;
         ss>>radius;
         light_radius_ = radius;
-        
+
         console_command_ = "";
     }
     else if(strings[0] == "quit")
@@ -462,7 +479,7 @@ void Wasteland::DoCommand(const std::string& str)
                 std::stringstream ss;
                 ss<<obj.GetUID()<<" "<<obj.GetQuantity()<<" ";
                 ss<<obj.GetParent()->GetName()<<"\n";
-                
+
                 console_output_ += ss.str();
             }
         }
@@ -477,9 +494,9 @@ void Wasteland::DoCommand(const std::string& str)
         {
             qty = boost::lexical_cast<uint32_t>(strings[2]);
         }
-        
+
         auto obj = player_->GetInventoryObject(id);
-        
+
         auto position = player_->GetPosition();
         auto &tile = map_->Get((uint32_t)position.x, (uint32_t)position.y);
         tile.objects.push_back(obj);
@@ -493,11 +510,11 @@ void Wasteland::DoCommand(const std::string& str)
         uint32_t id = boost::lexical_cast<uint32_t>(strings[1]);
         uint32_t x = boost::lexical_cast<uint32_t>(strings[2]);
         uint32_t y = boost::lexical_cast<uint32_t>(strings[3]);
-        
+
         auto obj = Object::CreateInstance(id, 1);
         auto &tile = map_->Get(x, y);
         tile.objects.push_back(obj);
-        
+
         console_command_ = "";
     }
     else if(strings[0] == "consumeobj")
