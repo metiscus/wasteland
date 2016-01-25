@@ -60,6 +60,8 @@ private:
     void ProcessInput();
     void Draw();
     void DoCommand(const std::string& str);
+
+    void CreateSprite(uint32_t id, const std::string& filename, const sf::Vector2f& scale);
 };
 
 #endif

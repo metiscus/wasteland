@@ -19,12 +19,8 @@ Wasteland::Wasteland()
 {
     window_ = std::make_unique<sf::RenderWindow>(sf::VideoMode(800, 600), "Wasteland");
 
-    auto playerTex = std::make_shared<sf::Texture>();
-    if(!playerTex->loadFromFile("data/person.png"))
-    {
-        std::cerr<<"Failed to load person texture\n";
-    }
-    textures_[3] = playerTex;
+    CreateSprite(3, "data/person.png", sf::Vector2f(0.5, 0.5));
+    CreateSprite(4, "data/combat_knife.png", sf::Vector2f(0.5, 0.5));
 
     //TODO: replace this debug art with something else
     auto red = std::make_shared<sf::Texture>();
@@ -63,11 +59,6 @@ Wasteland::Wasteland()
     greens->setScale(sf::Vector2f(32.0f, 32.0f));
     sprites_[1] = greens;
 
-    auto players = std::make_shared<sf::Sprite>();
-    players->setTexture(*playerTex);
-    players->scale(sf::Vector2f(0.5f, 0.5f));
-    sprites_[3] = players;
-
     player_->SetPosition(sf::Vector2f(1.0, 1.0));
 
     view_.setCenter(player_->GetPosition());
@@ -77,8 +68,23 @@ Wasteland::Wasteland()
 
     font_.loadFromFile("data/font.ttf");
 
-    Object::BuildFromString(std::string("3,1,10,2,Combat Knife,attack,5,range,1"));
+    Object::BuildFromString(std::string("3,1,10,4,Combat Knife,attack,5,range,1"));
     Object::BuildFromString(std::string("1,2,10,0,Ration,nutrition,500"));
+}
+
+void Wasteland::CreateSprite(uint32_t id, const std::string& filename, const sf::Vector2f& scale)
+{
+    auto tex = std::make_shared<sf::Texture>();
+    if(!tex->loadFromFile(filename.c_str()))
+    {
+        std::cerr<<"Failed to load person texture\n";
+    }
+    textures_[id] = tex;
+
+    auto sprite = std::make_shared<sf::Sprite>();
+    sprite->setTexture(*tex);
+    sprite->scale(scale);
+    sprites_[id] = sprite;
 }
 
 void Wasteland::Run()
@@ -227,11 +233,7 @@ void Wasteland::Draw()
                 if(tile.visited)
                 {
                     auto sprite = sprites_[(uint32_t)tile.type];
-                    //TODO: improve this
-                    if(tile.objects.size()>0)
-                    {
-                        sprite = sprites_[(uint32_t)(*tile.objects.begin()).GetParent()->GetSprite()];
-                    }
+
                     sprite->setPosition(sf::Vector2f(x*32, y*32));
                     if(!map_->GetLit(x,y))
                     {
@@ -242,6 +244,14 @@ void Wasteland::Draw()
                         sprite->setColor(sf::Color(255,255,255));
                     }
                     window_->draw(*sprites_[(uint32_t)tile.type]);
+
+                    //TODO: improve this
+                    if(tile.objects.size()>0)
+                    {
+                        sprite = sprites_[(uint32_t)(*tile.objects.begin()).GetParent()->GetSprite()];
+                        sprite->setPosition(sf::Vector2f(x*32, y*32));
+                        window_->draw(*sprite);
+                    }
                 }
             }
         }
