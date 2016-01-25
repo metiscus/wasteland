@@ -34,10 +34,7 @@ ObjectPtr Object::BuildFromString(const std::string& str)
 
     if(tokens.size() >= 5)
     {
-        ss<<tokens[0];
-        uint32_t tmp;
-        ss>>tmp;
-        ret->type_ = (ObjectType)tmp;
+        ret->type_ = StringToType(tokens[0]);
 
         ss.clear();
         ss<<tokens[1];
