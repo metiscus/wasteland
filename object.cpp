@@ -31,7 +31,7 @@ ObjectPtr Object::BuildFromString(const std::string& str)
     std::shared_ptr<Object> ret (new Object ());
     std::vector<std::string> tokens = TokenizeString(str);
     std::stringstream ss;
-    
+
     if(tokens.size() >= 5)
     {
         ss<<tokens[0];
@@ -42,7 +42,7 @@ ObjectPtr Object::BuildFromString(const std::string& str)
         ss.clear();
         ss<<tokens[1];
         ss>>ret->uid_;
-        
+
         ss.clear();
         ss<<tokens[2];
         ss>>ret->weight_;
@@ -50,9 +50,9 @@ ObjectPtr Object::BuildFromString(const std::string& str)
         ss.clear();
         ss<<tokens[3];
         ss>>ret->sprite_;
-        
+
         ret->name_ = tokens[4];
-        
+
         uint32_t value = 0;
         for(uint32_t ii = 5; ii<tokens.size()-1; ii+=2)
         {
@@ -61,10 +61,10 @@ ObjectPtr Object::BuildFromString(const std::string& str)
             ss>>value;
             ret->properties_.insert(std::make_pair(tokens[ii], value));
         }
-        
+
         objects_.insert(std::make_pair(ret->uid_, ret));
     }
-    
+
     return ret;
 }
 
@@ -83,6 +83,34 @@ std::string Object::ToString() const
 Object::Instance Object::CreateInstance(uint32_t id, uint32_t qty)
 {
     return Object::Instance(GetObject(id), qty);
+}
+
+ObjectType Object::StringToType(const std::string str)
+{
+    if(str == "OBJECT_FOOD")
+    {
+        return object_Food;
+    }
+    else if(str == "OBJECT_WATER")
+    {
+        return object_Water;
+    }
+    else if(str == "OBJECT_WEAPON")
+    {
+        return object_Weapon;
+    }
+    else if(str == "OBJECT_ARMOR")
+    {
+        return object_Armor;
+    }
+    else
+    {
+        std::stringstream ss;
+        ss<<str;
+        uint32_t val = object_Invalid;
+        ss>>val;
+        return (ObjectType)val;
+    }
 }
 
 uint32_t Object::GetUID() const

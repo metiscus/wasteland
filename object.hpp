@@ -14,7 +14,7 @@ enum ObjectType
     object_Water,
     object_Weapon,
     object_Armor,
-    
+
     object_Count
 };
 
@@ -44,10 +44,10 @@ public:
         ObjectPtr parent_;
     public:
         Instance(ObjectPtr obj, uint32_t qty = 1);
-        
+
         uint32_t GetUID() const;
         uint32_t GetQuantity() const;
-        
+
         ObjectPtr GetParent() const;
         ObjectPtr GetParent();
 
@@ -60,8 +60,8 @@ public:
     static ObjectPtr BuildFromString(const std::string& str);
     std::string ToString() const;
     static Instance CreateInstance(uint32_t id, uint32_t qty);
-    
-    
+    static ObjectType StringToType(const std::string str);
+
     uint32_t GetUID() const;
     ObjectType GetType() const;
     const std::string& GetName() const;
