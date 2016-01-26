@@ -1,5 +1,6 @@
 #include "character.hpp"
 #include <cassert>
+#include <iostream>
 
 static const uint32_t MaxInventoryWeightPerStrength = 10;
 
@@ -141,11 +142,15 @@ bool Character::AddInventoryObject(Object::Instance objecti)
     auto itr = inventory_.find(object->GetUID());
     if(itr == inventory_.end())
     {
-        inventory_.emplace(std::make_pair(object->GetUID(), object));
+        std::cerr<<"adding item because I didnt have one " << object->GetUID() << " qty: " << objecti.GetQuantity() << "\n";
+        inventory_.emplace(std::make_pair(object->GetUID(), objecti));
     }
     else
     {
+        std::cerr<<"Increasing quantity before " << itr->second.GetQuantity()<<"\n";
+        std::cerr<<"Changing by " << objecti.GetQuantity() << "\n";
         itr->second.ChangeQuantity( objecti.GetQuantity() );
+        std::cerr<<"Quantity After " <<  itr->second.GetQuantity()<<"\n";
     }
     return true;
 }
@@ -205,15 +210,18 @@ void Character::RemoveInventoryObject(uint32_t id, uint32_t qty)
     if(itr != inventory_.end())
     {
         // decrement the quantity or possibly remove the object
-        auto obj = itr->second;
+        auto &obj = itr->second;
         if(obj.GetQuantity() <= qty)
         {
             inventory_.erase(itr);
         }
         else
         {
-            obj.SetQuantity(obj.GetQuantity() - qty);
+            obj.ChangeQuantity(-int32_t(qty));
         }
+    }
+    else {
+        assert(false);
     }
 }
 

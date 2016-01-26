@@ -77,6 +77,9 @@ private:
     void DoCommand(const std::string& str);
 
     void CreateSprite(uint32_t id, const std::string& filename, const sf::Vector2f& scale);
+    
+    void HandlePlayerInventory();
+    void HandlePlayerDropItem(uint32_t id, uint32_t qty);
 };
 
 #endif
