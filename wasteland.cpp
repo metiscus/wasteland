@@ -363,10 +363,10 @@ void Wasteland::HandlePlayerInventory()
             }
             );
             
+            //TODO: figure out why we have to move the window before right clicking works?!
             btn->GetSignal( sfg::Button::OnRightClick ).Connect(
                 [this, id, qty] () {
-                    
-                    std::cerr<<"dropping " << qty << " of item " << id <<"\n";
+                    std::cerr<<"AAA dropping " << qty << " of item " << id <<"\n";
                     HandlePlayerDropItem(id, qty); 
             }
             );
