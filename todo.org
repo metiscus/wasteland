@@ -4,8 +4,8 @@ Wastelander is a roguelike game based in a post nuclear apocalyptic world
 ** DONE As a user I can pick up items
 *** DONE Map must hold items
 If I am unable to hold the item due to having too much weight it will not be picked up
-** TODO As a user I can list the items in my inventory
-** TODO As a user I can drop items on the ground
+** DONE As a user I can list the items in my inventory
+** DONE As a user I can drop items on the ground
 ** TODO As a user I can attack with an equipped weapon
 There will be several base weapon types that will have different mecnahics
 This story invloves creating the general/melee weapon base type
