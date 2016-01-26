@@ -314,7 +314,7 @@ void Wasteland::Draw()
         for(auto obj : objects)
         {
             std::stringstream ss;
-            ss<<obj.GetUID()<<" "<<obj.GetQuantity()<<" ";
+            ss<<"Id: "<<obj.GetUID()<<" Quantity: "<<obj.GetQuantity()<<" ";
             ss<<obj.GetParent()->GetName()<<"\n";
 
             inventory_string += ss.str();
