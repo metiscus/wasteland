@@ -70,10 +70,20 @@ Wasteland::Wasteland()
     zoom_ = 1.0f;
 
     font_.loadFromFile("data/font.ttf");
+    
+    menu_ = "";
 
-    Object::BuildFromString(std::string("3,1,10,4,Combat Knife,attack,5,range,1"));
-    Object::BuildFromString(std::string("1,2,10,0,Ration,nutrition,500"));
-    Object::BuildFromString(std::string("3,3,18,5,.45 Pistol,attack,15,range,80,ammo_cap,8,ammo_type,45"));
+    Object::BuildFromString(std::string("1,3,10,4,Combat Knife,melee,5"));
+    Object::BuildFromString(std::string("2,1,10,0,Ration,nutrition,500"));
+    Object::BuildFromString(std::string("3,3,18,5,.45 Pistol,melee,1,attack,15,range,80,ammo_cap,8,ammo_type,45"));
+    Object::BuildFromString(std::string("4,3,18,0,Teeth,melee,3"));
+    
+    // inventory window
+    equipment_ =  sfg::Window::Create();
+    equipment_->SetTitle("Equipment");
+    inventory_ = sfg::Label::Create();
+    equipment_->Add(inventory_);
+    desktop_.Add(equipment_);
 }
 
 void Wasteland::CreateSprite(uint32_t id, const std::string& filename, const sf::Vector2f& scale)
@@ -109,6 +119,8 @@ void Wasteland::ProcessInput()
     sf::Event event;
     while (window_->pollEvent(event))
     {
+        desktop_.HandleEvent( event );
+        
         if (event.type == sf::Event::Closed)
         {
             should_quit_ = true;
@@ -293,6 +305,26 @@ void Wasteland::Draw()
     /// Print text elements
     window_->setView(text_view_);
 
+
+    //TODO:
+    std::string inventory_string;
+    for(uint32_t type = object_First; type < object_Count; ++type)
+    {
+        auto objects = player_->GetInventoryObjectsByType((ObjectType)type);
+        for(auto obj : objects)
+        {
+            std::stringstream ss;
+            ss<<obj.GetUID()<<" "<<obj.GetQuantity()<<" ";
+            ss<<obj.GetParent()->GetName()<<"\n";
+
+            inventory_string += ss.str();
+        }
+    }
+    inventory_->SetText(inventory_string);
+
+    desktop_.Update(clock_.restart().asSeconds());
+    gui_.Display(*window_);
+
     // Status line
     sf::Text position(GetStatusLine().c_str(), font_);
     position.setCharacterSize(20);
@@ -313,6 +345,11 @@ void Wasteland::Draw()
         console_output.setPosition(sf::Vector2f(50, 150));
         window_->draw(console_output);
     }
+    
+    sf::Text menu_output(menu_.c_str(), font_);
+    menu_output.setCharacterSize(20);
+    menu_output.setPosition(sf::Vector2f(50, 200));
+    window_->draw(menu_output);
 
     window_->display();
 }
@@ -416,18 +453,20 @@ void Wasteland::UpdateMap()
                     else
                     {
                         auto move_to = my_pos + toPlayer;
+                        move_to.x = int(roundf(move_to.x));
+                        move_to.y = int(roundf(move_to.y));
+
                         // try to move
                         if(map_->IsPassable(move_to.x, move_to.y))
                         {
                             chr->SetPosition(move_to);
-                            chr->SetFacing(toPlayer);
+                            chr->SetFacing(sf::Vector2f(int(roundf(toPlayer.x)), int(roundf(toPlayer.y))));
                         }
                     }
                 }
             }
         }
     }
-
 }
 
 void Wasteland::UpdateVisited()

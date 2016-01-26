@@ -1,6 +1,7 @@
 #ifndef CHARACTER_HPP_INCLUDED
 #define CHARACTER_HPP_INCLUDED
 
+#include <array>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -21,6 +22,13 @@ struct CharacterTraits
 class Character;
 typedef std::shared_ptr<Character> CharacterPtr;
 
+enum EquipmentSlot
+{
+    Slot_Weapon,
+    
+    Slot_Count
+};
+
 class Character
 {
     uint32_t strength_;
@@ -38,6 +46,8 @@ class Character
     CharacterTraits traits_;
 
     uint32_t sprite_id_;
+    
+    std::array<uint32_t, Slot_Count> equipement_;
 
 
 public:
@@ -74,6 +84,11 @@ public:
     std::vector<Object::Instance> GetInventoryObjectsByType(ObjectType type);
     Object::Instance GetInventoryObject(uint32_t uid);
     void RemoveInventoryObject(uint32_t id, uint32_t qty);
+    
+    // equipment
+    void EquipItem(EquipmentSlot slot, uint32_t id);
+    void UnequipItem(EquipmentSlot slot);
+    uint32_t GetEquippedItem(EquipmentSlot slot);
 };
 
 

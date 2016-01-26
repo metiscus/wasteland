@@ -34,11 +34,11 @@ ObjectPtr Object::BuildFromString(const std::string& str)
 
     if(tokens.size() >= 5)
     {
-        ret->type_ = StringToType(tokens[0]);
-
         ss.clear();
-        ss<<tokens[1];
+        ss<<tokens[0];
         ss>>ret->uid_;
+
+        ret->type_ = StringToType(tokens[1]);
 
         ss.clear();
         ss<<tokens[2];
@@ -68,7 +68,7 @@ ObjectPtr Object::BuildFromString(const std::string& str)
 std::string Object::ToString() const
 {
     std::stringstream ss;
-    ss<<type_<<","<<uid_<<","<<weight_<<","<<name_<<","<<sprite_;
+    ss<<uid_<<","<<type_<<","<<weight_<<","<<name_<<","<<sprite_;
     for(auto itr : properties_)
     {
         ss<<","<<itr.first<<","<<itr.second;

@@ -6,6 +6,8 @@
 #include <string>
 #include <unordered_map>
 #include "object.hpp"
+#include <SFGUI/SFGUI.hpp>
+#include <SFGUI/Widgets.hpp>
 
 class Character;
 
@@ -31,6 +33,7 @@ private:
 
     std::unordered_map<uint32_t, std::shared_ptr<sf::Sprite> > sprites_;
     std::unordered_map<uint32_t, std::shared_ptr<sf::Texture> > textures_;
+    std::unordered_map<uint32_t, std::shared_ptr<sf::Image> > images_;
     std::unique_ptr<Character> player_;
 
     sf::View view_;
@@ -44,8 +47,18 @@ private:
 
     std::string console_command_;
     std::string console_output_;
+    std::string menu_;
     
     bool step_;
+    
+    sfg::SFGUI gui_;
+    sfg::Desktop desktop_;
+    sfg::Window::Ptr equipment_;
+    sfg::Label::Ptr inventory_;
+    
+    sf::Clock clock_;
+    
+    
 public:
     Wasteland();
 

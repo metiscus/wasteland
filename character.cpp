@@ -216,3 +216,18 @@ void Character::RemoveInventoryObject(uint32_t id, uint32_t qty)
         }
     }
 }
+
+void Character::EquipItem(EquipmentSlot slot, uint32_t id)
+{
+    equipement_[slot] = id;
+}
+
+void Character::UnequipItem(EquipmentSlot slot)
+{
+    equipement_[slot] = 0;
+}
+
+uint32_t Character::GetEquippedItem(EquipmentSlot slot)
+{
+    return equipement_[slot];
+}

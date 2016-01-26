@@ -289,6 +289,7 @@ std::vector<bool> Map::ComputeLighting(uint32_t x, uint32_t y, uint32_t radius)
     
     fov_settings_set_apply_lighting_function(&fov_settings, apply_lighting);
     fov_settings_set_shape(&fov_settings, FOV_SHAPE_OCTAGON);
+    fov_settings_set_corner_peek(&fov_settings, FOV_CORNER_PEEK);
     
     fov_circle(&fov_settings, this, &ret, x, y, radius);
     
