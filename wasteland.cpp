@@ -20,6 +20,8 @@ Wasteland::Wasteland()
 {
     window_ = std::make_unique<sf::RenderWindow>(sf::VideoMode(800, 600), "Wasteland");
 
+    CreateSprite(1, "data/grass.png", sf::Vector2f(0.5, 0.5));
+    CreateSprite(2, "data/walls.png", sf::Vector2f(0.5, 0.5));
     CreateSprite(3, "data/person.png", sf::Vector2f(0.5, 0.5));
     CreateSprite(4, "data/combat_knife.png", sf::Vector2f(0.5, 0.5));
     CreateSprite(5, "data/45_pistol.png", sf::Vector2f(0.5, 0.5));
@@ -33,34 +35,34 @@ Wasteland::Wasteland()
     red->setRepeated(true);
     textures_[0] = red;
 
-    auto green = std::make_shared<sf::Texture>();
-    green->create(1,1);
-    uint8_t green_b[] = { 100, 255, 100, 255 };
-    green->update(green_b);
-    green->setRepeated(true);
-    textures_[1] = green;
+    //auto green = std::make_shared<sf::Texture>();
+    //green->create(1,1);
+    //uint8_t green_b[] = { 100, 255, 100, 255 };
+    //green->update(green_b);
+    //green->setRepeated(true);
+    //textures_[1] = green;
 
-    auto blue = std::make_shared<sf::Texture>();
-    blue->create(1,1);
-    uint8_t blue_b[] = { 200, 200, 200, 255 };
-    blue->update(blue_b);
-    blue->setRepeated(true);
-    textures_[2] = blue;
+    //auto blue = std::make_shared<sf::Texture>();
+    //blue->create(1,1);
+    //uint8_t blue_b[] = { 200, 200, 200, 255 };
+    //blue->update(blue_b);
+    //blue->setRepeated(true);
+    //textures_[2] = blue;
 
     auto reds = std::make_shared<sf::Sprite>();
     reds->setTexture(*red);
     reds->setScale(sf::Vector2f(32.0f, 32.0f));
     sprites_[0] = reds;
 
-    auto blues = std::make_shared<sf::Sprite>();
-    blues->setTexture(*blue);
-    blues->setScale(sf::Vector2f(32.0f, 32.0f));
-    sprites_[2] = blues;
+    //auto blues = std::make_shared<sf::Sprite>();
+    //blues->setTexture(*blue);
+    //blues->setScale(sf::Vector2f(32.0f, 32.0f));
+    //sprites_[2] = blues;
 
-    auto greens = std::make_shared<sf::Sprite>();
-    greens->setTexture(*green);
-    greens->setScale(sf::Vector2f(32.0f, 32.0f));
-    sprites_[1] = greens;
+    //auto greens = std::make_shared<sf::Sprite>();
+    //greens->setTexture(*green);
+    //greens->setScale(sf::Vector2f(32.0f, 32.0f));
+    //sprites_[1] = greens;
 
     player_->SetPosition(sf::Vector2f(1.0, 1.0));
 
