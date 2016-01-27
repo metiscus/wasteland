@@ -81,7 +81,7 @@ Wasteland::Wasteland()
     // inventory window
     equipment_ =  sfg::Window::Create();
     equipment_->SetTitle("Equipment");
-    inventory_ = sfg::Label::Create();
+    inventory_ = sfg::Box::Create(sfg::Box::Orientation::VERTICAL, 10.f);
     equipment_->Add(inventory_);
     desktop_.Add(equipment_);
 }
@@ -305,7 +305,6 @@ void Wasteland::Draw()
     /// Print text elements
     window_->setView(text_view_);
 
-    //inventory_->SetText(inventory_string);
 
     desktop_.Update(clock_.restart().asSeconds());
     gui_.Display(*window_);
@@ -342,7 +341,8 @@ void Wasteland::Draw()
 void Wasteland::HandlePlayerInventory()
 {
     //TODO: handle dropping items
-    equipment_->RemoveAll();
+    inventory_->RemoveAll();
+    buttons_.clear();
     std::string inventory_string;
     for(uint32_t type = object_First; type < object_Count; ++type)
     {
@@ -353,7 +353,7 @@ void Wasteland::HandlePlayerInventory()
             std::stringstream ss;
             ss<<obj.GetParent()->GetName()<<" ("<<obj.GetQuantity()<<")";
             btn->SetLabel(ss.str());
-            equipment_->Add(btn);
+            inventory_->Pack(btn);
             uint32_t id = obj.GetUID();
             uint32_t qty = obj.GetQuantity();
             
@@ -370,6 +370,8 @@ void Wasteland::HandlePlayerInventory()
                     HandlePlayerDropItem(id, qty); 
             }
             );
+            
+            buttons_.push_back(btn);
         }
     }
 }

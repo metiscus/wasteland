@@ -54,7 +54,8 @@ private:
     sfg::SFGUI gui_;
     sfg::Desktop desktop_;
     sfg::Window::Ptr equipment_;
-    sfg::Label::Ptr inventory_;
+    sfg::Box::Ptr inventory_;
+    std::vector<sfg::Button::Ptr> buttons_;
     
     sf::Clock clock_;
     
