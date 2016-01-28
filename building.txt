@@ -1,6 +1,7 @@
 ==[ Build Instructions ]==
 On Debian Jessie:
     sudo apt-get build-dep libsfml-dev
+    sudo apt-get install libboost-dev
     git clone https://github.com/SFML/SFML.git
     cd SFML
     mkdir build
