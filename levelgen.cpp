@@ -18,7 +18,13 @@ void LevelGen::Generate(uint32_t seed, uint32_t width, uint32_t height)
 {
     map_->Resize(width, height);
     
-    std::default_random_engine generator;
+    std::random_device rd;
+    
+    std::default_random_engine generator(seed);
+    if(seed == 0)
+    {
+        generator = std::default_random_engine(rd());
+    }
     std::uniform_int_distribution<uint32_t> tile_Type((uint32_t)tile_Ground, (uint32_t)tile_Count-1);
     uint32_t box = (uint32_t)(0.9 * std::min(width, height));
     std::uniform_int_distribution<uint32_t> tile(std::min(5U, box), box);
@@ -64,7 +70,7 @@ void LevelGen::Generate(uint32_t seed, uint32_t width, uint32_t height)
         
         map_->Get(x, y + hheight /2).SetFromType(tile_Ground);
         
-        if(house_item(generator) < 20)
+        if(house_item(generator) < 40)
         {
             if(house_item(generator) < 50)
             {
