@@ -88,6 +88,26 @@ void Wasteland::Run()
     while(!should_quit_)
     {
         ProcessInput();
+        
+        //TODO: move this to a better place
+        while(!actions_.empty())
+        {
+            const Action& action = actions_.front();
+            switch(action.type)
+            {
+                case Action_PlayerMove:
+                    HandlePlayerMovement((PlayerMovement)action.data);
+                    break;
+                case Action_PlayerPickUp:
+                    HandlePickup();
+                    break;
+                case Action_PlayerDrop:
+                    HandlePlayerDropItem(action.data, 1);
+                    break;
+            }
+            actions_.pop();
+        }
+
         UpdateMap();
         Draw();
         step_ = false;
@@ -151,6 +171,7 @@ void Wasteland::ProcessInput()
             }
             else
             {
+                Action action;
                 switch(event.key.code)
                 {
                     case sf::Keyboard::Tilde:
@@ -160,31 +181,55 @@ void Wasteland::ProcessInput()
 
                     case sf::Keyboard::Numpad4:
                     case sf::Keyboard::A:
-                        HandlePlayerMovement(Player_MoveWest);
+                        action.type = Action_PlayerMove;
+                        action.data = Player_MoveWest;
+                        actions_.push(action);
+                        //HandlePlayerMovement(Player_MoveWest);
                         break;
                     case sf::Keyboard::Numpad2:
                     case sf::Keyboard::S:
-                        HandlePlayerMovement(Player_MoveSouth);
+                        action.type = Action_PlayerMove;
+                        action.data = Player_MoveSouth;
+                        actions_.push(action);
+                        //HandlePlayerMovement(Player_MoveSouth);
                         break;
                     case sf::Keyboard::Numpad6:
                     case sf::Keyboard::D:
-                        HandlePlayerMovement(Player_MoveEast);
+                        action.type = Action_PlayerMove;
+                        action.data = Player_MoveEast;
+                        actions_.push(action);
+                        //HandlePlayerMovement(Player_MoveEast);
                         break;
                     case sf::Keyboard::Numpad8:
                     case sf::Keyboard::W:
-                        HandlePlayerMovement(Player_MoveNorth);
+                        action.type = Action_PlayerMove;
+                        action.data = Player_MoveNorth;
+                        actions_.push(action);
+                        //HandlePlayerMovement(Player_MoveNorth);
                         break;
                     case sf::Keyboard::Numpad3:
-                        HandlePlayerMovement(Player_MoveSouthEast);
+                        action.type = Action_PlayerMove;
+                        action.data = Player_MoveSouthEast;
+                        actions_.push(action);
+                        //HandlePlayerMovement(Player_MoveSouthEast);
                         break;
                     case sf::Keyboard::Numpad1:
-                        HandlePlayerMovement(Player_MoveSouthWest);
+                        action.type = Action_PlayerMove;
+                        action.data = Player_MoveSouthWest;
+                        actions_.push(action);
+                        //HandlePlayerMovement(Player_MoveSouthWest);
                         break;
                     case sf::Keyboard::Numpad9:
-                        HandlePlayerMovement(Player_MoveNorthEast);
+                        action.type = Action_PlayerMove;
+                        action.data = Player_MoveNorthEast;
+                        actions_.push(action);
+                        //HandlePlayerMovement(Player_MoveNorthEast);
                         break;
                     case sf::Keyboard::Numpad7:
-                        HandlePlayerMovement(Player_MoveNorthWest);
+                        action.type = Action_PlayerMove;
+                        action.data = Player_MoveNorthWest;
+                        actions_.push(action);
+                        //HandlePlayerMovement(Player_MoveNorthWest);
                         break;
                     case sf::Keyboard::Equal:
                     case sf::Keyboard::Add:
@@ -195,8 +240,9 @@ void Wasteland::ProcessInput()
                         view_.zoom(1.111);
                         break;
                     case sf::Keyboard::G:
-                        // get/pick-up
-                        HandlePickup();
+                        action.type = Action_PlayerPickUp;
+                        action.data = 0;
+                        actions_.push(action);
                         break;
                     default:
                         {
@@ -319,36 +365,65 @@ void Wasteland::HandlePlayerInventory()
 {
     //TODO: handle dropping specific items
     inventory_->RemoveAll();
-    buttons_.clear();
+    inventory_widgets_.clear();
     std::string inventory_string;
+    
+    auto inventory_table = sfg::Table::Create();
+    inventory_widgets_.push_back(inventory_table);
+    inventory_->Pack(inventory_table);
+
+    uint32_t row = 0;
     for(uint32_t type = object_First; type < object_Count; ++type)
     {
         auto objects = player_->GetInventoryObjectsByType((ObjectType)type);
         for(auto obj : objects)
         {
-            auto btn = sfg::Button::Create();
+            sf::Rect<sf::Uint32> pos (0, row, 1, 1);
+
+            //Object Name
+            auto obj_label = sfg::Label::Create();
+            obj_label->SetText(obj.GetParent()->GetName());
+            inventory_table->Attach(obj_label, pos, sfg::Table::FILL | sfg::Table::EXPAND, sfg::Table::FILL, sf::Vector2f( 10.f, 10.f ) );
+            inventory_widgets_.push_back(obj_label);
+            ++pos.left;
+            
+            //Object Quantity
+            auto obj_qty = sfg::Label::Create();
             std::stringstream ss;
-            ss<<obj.GetParent()->GetName()<<" ("<<obj.GetQuantity()<<")";
-            btn->SetLabel(ss.str());
-            inventory_->Pack(btn);
+            ss<<obj.GetQuantity();
+            obj_qty->SetText(ss.str());
+            inventory_table->Attach(obj_qty, pos, sfg::Table::FILL | sfg::Table::EXPAND, sfg::Table::FILL, sf::Vector2f( 10.f, 10.f ) );
+            inventory_widgets_.push_back(obj_qty);
+            ++pos.left;
+            
+            //Object Weight
+            auto obj_wt = sfg::Label::Create();
+            ss.clear();
+            ss<<obj.GetParent()->GetWeight() * obj.GetQuantity();
+            obj_wt->SetText(ss.str());
+            inventory_table->Attach(obj_wt, pos, sfg::Table::FILL | sfg::Table::EXPAND, sfg::Table::FILL, sf::Vector2f( 10.f, 10.f ) );
+            inventory_widgets_.push_back(obj_wt);
+            ++pos.left;
+            
+            //Drop button
+            auto btn = sfg::Button::Create();
+            btn->SetLabel("Drop");
+            inventory_table->Attach(btn, pos, sfg::Table::FILL | sfg::Table::EXPAND, sfg::Table::FILL, sf::Vector2f( 10.f, 10.f ) );
+            ++pos.left;
             uint32_t id = obj.GetUID();
             uint32_t qty = obj.GetQuantity();
             
             btn->GetSignal( sfg::Button::OnLeftClick ).Connect(
                 [this, id] () {
-                    HandlePlayerDropItem(id, 1); 
-            }
-            );
+                    Action action;
+                    action.type = Action_PlayerDrop;
+                    action.data = id;
+                    actions_.push(action);
+            });
             
-            //TODO: figure out why we have to move the window before right clicking works?!
-            btn->GetSignal( sfg::Button::OnRightClick ).Connect(
-                [this, id, qty] () {
-                    std::cerr<<"AAA dropping " << qty << " of item " << id <<"\n";
-                    HandlePlayerDropItem(id, qty); 
-            }
-            );
+            inventory_widgets_.push_back(btn);
             
-            buttons_.push_back(btn);
+            ++row;
         }
     }
 }

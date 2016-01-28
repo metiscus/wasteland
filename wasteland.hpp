@@ -9,6 +9,7 @@
 #include "object.hpp"
 #include <SFGUI/SFGUI.hpp>
 #include <SFGUI/Widgets.hpp>
+#include <queue>
 
 class Character;
 
@@ -56,10 +57,24 @@ private:
     sfg::Desktop desktop_;
     sfg::Window::Ptr equipment_;
     sfg::Box::Ptr inventory_;
-    std::vector<sfg::Button::Ptr> buttons_;
+    std::vector<sfg::Widget::Ptr> inventory_widgets_;
     
     sf::Clock clock_;
     
+    enum ActionType
+    {
+        Action_PlayerMove,
+        Action_PlayerPickUp,
+        Action_PlayerDrop
+    };
+    
+    struct Action
+    {
+        ActionType type;
+        uint32_t data;
+    };
+    
+    std::queue<Action> actions_;
     
 public:
     Wasteland();
