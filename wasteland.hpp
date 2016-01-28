@@ -84,6 +84,7 @@ public:
     void SetMap(std::shared_ptr<Map> map);
 
 private:
+    void ProcessActionQueue();
     void HandlePlayerMovement(PlayerMovement action);
     void HandlePickup();
     void UpdateVisited();

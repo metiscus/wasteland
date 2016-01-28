@@ -101,26 +101,7 @@ void Wasteland::Run()
     while(!should_quit_)
     {
         ProcessInput();
-        
-        //TODO: move this to a better place
-        while(!actions_.empty())
-        {
-            const Action& action = actions_.front();
-            switch(action.type)
-            {
-                case Action_PlayerMove:
-                    HandlePlayerMovement((PlayerMovement)action.data);
-                    break;
-                case Action_PlayerPickUp:
-                    HandlePickup();
-                    break;
-                case Action_PlayerDrop:
-                    HandlePlayerDropItem(action.data, 1);
-                    break;
-            }
-            actions_.pop();
-        }
-
+        ProcessActionQueue();
         UpdateMap();
         Draw();
         step_ = false;
@@ -264,6 +245,27 @@ void Wasteland::ProcessInput()
     }
 }
 
+void Wasteland::ProcessActionQueue()
+{
+    //TODO: move this to a better place
+    while(!actions_.empty())
+    {
+        const Action& action = actions_.front();
+        switch(action.type)
+        {
+            case Action_PlayerMove:
+                HandlePlayerMovement((PlayerMovement)action.data);
+                break;
+            case Action_PlayerPickUp:
+                HandlePickup();
+                break;
+            case Action_PlayerDrop:
+                HandlePlayerDropItem(action.data, 1);
+                break;
+        }
+        actions_.pop();
+    }
+}
 
 void Wasteland::Draw()
 {
@@ -423,8 +425,7 @@ void Wasteland::HandlePlayerInventory()
             btn->SetLabel("Drop");
             inventory_table->Attach(btn, pos, sfg::Table::FILL | sfg::Table::EXPAND, sfg::Table::FILL, sf::Vector2f( 5.f, 5.f ) );
             ++pos.left;
-            uint32_t id = obj.GetUID();
-            uint32_t qty = obj.GetQuantity();
+            uint32_t id = obj.GetId();
             
             btn->GetSignal( sfg::Button::OnLeftClick ).Connect(
                 [this, id] () {
@@ -451,7 +452,7 @@ void Wasteland::HandlePlayerDropItem(uint32_t id, uint32_t qty)
     bool was_there = false;
     for(auto& tgtobj : tile.objects)
     {
-        if(tgtobj.GetUID() == id)
+        if(tgtobj.GetId() == id)
         {
             std::cerr<<"Found existing item on drop "<<tgtobj.GetQuantity()<<"\n";
             std::cerr<<"Increasing qty by "<<qty<<"\n";
@@ -530,11 +531,21 @@ void Wasteland::HandlePickup()
         return;
     }
 
-    tile.objects.erase(std::remove_if(tile.objects.begin(), tile.objects.end(), [this](Object::Instance p)
+    std::vector< std::pair<ObjectId, uint32_t> > removed;
+
+    for(auto &obj : tile.objects)
     {
-        return player_->AddInventoryObject(p);
-    }));
+        if(player_->AddInventoryObject(obj))
+        {
+            removed.push_back(std::make_pair(obj.GetId(), obj.GetQuantity()));
+        }
+    }
     
+    for(auto &itr : removed)
+    {
+        tile.RemoveObject(itr.first, itr.second);
+    }
+
     HandlePlayerInventory();
 }
 
@@ -694,7 +705,7 @@ void Wasteland::DoCommand(const std::string& str)
             for(auto obj : objects)
             {
                 std::stringstream ss;
-                ss<<obj.GetUID()<<" "<<obj.GetQuantity()<<" ";
+                ss<<obj.GetId()<<" "<<obj.GetQuantity()<<" ";
                 ss<<obj.GetParent()->GetName()<<"\n";
 
                 console_output_ += ss.str();

@@ -20,6 +20,8 @@ enum ObjectType
 
 struct ObjectData;
 
+typedef uint32_t ObjectId;
+
 class Object;
 typedef std::shared_ptr<Object> ObjectPtr;
 
@@ -27,25 +29,25 @@ class Object final
 {
 private:
     ObjectType type_;
-    uint32_t uid_;
+    ObjectId uid_;
     uint32_t weight_;
     std::string name_;
     uint32_t sprite_;
 
     std::unordered_map<std::string, uint32_t> properties_;
-    static std::unordered_map<uint32_t, ObjectPtr> objects_;
+    static std::unordered_map<ObjectId, ObjectPtr> objects_;
     Object();
 
 public:
     class Instance
     {
-        uint32_t uid_;
+        ObjectId uid_;
         uint32_t quantity_;
         ObjectPtr parent_;
     public:
         Instance(ObjectPtr obj, uint32_t qty = 1);
 
-        uint32_t GetUID() const;
+        ObjectId GetId() const;
         uint32_t GetQuantity() const;
 
         ObjectPtr GetParent() const;
@@ -56,13 +58,13 @@ public:
         const std::string& GetName() const;
     };
 
-    static ObjectPtr GetObject(uint32_t id);
+    static ObjectPtr GetObject(ObjectId id);
     static ObjectPtr BuildFromString(const std::string& str);
     std::string ToString() const;
-    static Instance CreateInstance(uint32_t id, uint32_t qty);
+    static Instance CreateInstance(ObjectId id, uint32_t qty);
     static ObjectType StringToType(const std::string str);
 
-    uint32_t GetUID() const;
+    ObjectId GetId() const;
     ObjectType GetType() const;
     const std::string& GetName() const;
     uint32_t GetWeight() const;

@@ -37,6 +37,27 @@ void MapTile::SetFromType(TileType type)
     }
 }
 
+void MapTile::RemoveObject(ObjectId id, uint32_t qty)
+{
+    for(auto itr = objects.begin(); itr!=objects.end(); ++itr)
+    {
+        if(itr->GetId() == id)
+        {
+            if(itr->GetQuantity() <= qty)
+            {
+                objects.erase(itr);
+            }
+            else
+            {
+                itr->SetQuantity(itr->GetQuantity() - qty);
+            }
+            return;
+        }
+    }
+    
+    assert(false);
+}
+
 inline void DeserializeTile(const rapidxml::xml_node<> *tile_node, MapTile& tile);
 inline void SerializeTile(rapidxml::xml_node<> *map_node, const MapTile& tile);
 
@@ -378,7 +399,7 @@ inline void SerializeTile(rapidxml::xml_node<> *map_node, const MapTile& tile)
     {
         auto instance = doc->allocate_node(node_element, doc->allocate_string("object_instance"));
         node->append_node(instance);
-        auto uid_str = doc->allocate_string(lexical_cast<std::string>((uint32_t)itr.GetUID()).c_str());
+        auto uid_str = doc->allocate_string(lexical_cast<std::string>((uint32_t)itr.GetId()).c_str());
         auto uid_attr = doc->allocate_attribute(doc->allocate_string("uid"), uid_str);
         instance->append_attribute(uid_attr);
 

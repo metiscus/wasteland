@@ -4,7 +4,7 @@
 #include <cassert>
 #include <sstream>
 
-std::unordered_map<uint32_t, ObjectPtr> Object::objects_;
+std::unordered_map<ObjectId, ObjectPtr> Object::objects_;
 
 Object::Object()
 {
@@ -15,7 +15,7 @@ Object::Object()
     sprite_ = 0;
 }
 
-ObjectPtr Object::GetObject(uint32_t id)
+ObjectPtr Object::GetObject(ObjectId id)
 {
     ObjectPtr ret;
     auto itr = objects_.find(id);
@@ -77,7 +77,7 @@ std::string Object::ToString() const
     return ss.str();
 }
 
-Object::Instance Object::CreateInstance(uint32_t id, uint32_t qty)
+Object::Instance Object::CreateInstance(ObjectId id, uint32_t qty)
 {
     return Object::Instance(GetObject(id), qty);
 }
@@ -110,7 +110,7 @@ ObjectType Object::StringToType(const std::string str)
     }
 }
 
-uint32_t Object::GetUID() const
+ObjectId Object::GetId() const
 {
     return uid_;
 }
@@ -168,10 +168,10 @@ Object::Instance::Instance(ObjectPtr obj, uint32_t qty)
     : quantity_(qty)
     , parent_(obj)
 {
-    uid_ = obj->GetUID();
+    uid_ = obj->GetId();
 }
 
-uint32_t Object::Instance::GetUID() const
+ObjectId Object::Instance::GetId() const
 {
     return uid_;
 }

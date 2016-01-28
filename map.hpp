@@ -32,6 +32,7 @@ struct MapTile
     float radiation;
     
     void SetFromType(TileType type);
+    void RemoveObject(ObjectId id, uint32_t qty);
 };
 
 class Map final
