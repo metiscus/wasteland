@@ -49,6 +49,7 @@ void LevelGen::Generate(uint32_t seed, uint32_t width, uint32_t height)
     
     std::uniform_int_distribution<uint32_t> house(std::min(15U, box), box);
     std::uniform_int_distribution<uint32_t> house_size(7, 15);
+    std::uniform_int_distribution<uint32_t> house_item(0, 100);
     // Generate a few houses
     for(int ii=0; ii<5; ++ii)
     {
@@ -62,6 +63,20 @@ void LevelGen::Generate(uint32_t seed, uint32_t width, uint32_t height)
         VLine(x + hwidth-1, y, hheight, tile_Wall);
         
         map_->Get(x, y + hheight /2).SetFromType(tile_Ground);
+        
+        if(house_item(generator) < 20)
+        {
+            if(house_item(generator) < 50)
+            {
+                auto instance = Object::CreateInstance(1, 1);
+                map_->Get(x + hwidth/2, y+hheight/2).objects.push_back(instance);
+            }
+            else
+            {
+                auto instance = Object::CreateInstance(3, 1);
+                map_->Get(x + hwidth/2, y+hheight/2).objects.push_back(instance);
+            }
+        }
     }
 }
 
