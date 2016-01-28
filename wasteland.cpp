@@ -63,7 +63,7 @@ Wasteland::Wasteland()
     // inventory window
     equipment_ =  sfg::Window::Create();
     equipment_->SetTitle("Equipment");
-    inventory_ = sfg::Box::Create(sfg::Box::Orientation::VERTICAL, 10.f);
+    inventory_ = sfg::Box::Create(sfg::Box::Orientation::VERTICAL, 5.f);
     equipment_->Add(inventory_);
     desktop_.Add(equipment_);
 }
@@ -374,6 +374,7 @@ void Wasteland::HandlePlayerInventory()
     std::string inventory_string;
     
     auto inventory_table = sfg::Table::Create();
+    inventory_table->SetRowSpacings(3.0);
     inventory_widgets_.push_back(inventory_table);
     inventory_->Pack(inventory_table);
 
@@ -388,14 +389,14 @@ void Wasteland::HandlePlayerInventory()
             //Object Image!!!!111
             auto obj_image = sfg::Image::Create();
             obj_image->SetImage(*images_[obj.GetParent()->GetSprite()]);
-            inventory_table->Attach(obj_image, pos, sfg::Table::FILL | sfg::Table::EXPAND, sfg::Table::FILL, sf::Vector2f( 10.f, 10.f ) );
+            inventory_table->Attach(obj_image, pos, sfg::Table::FILL | sfg::Table::EXPAND, sfg::Table::FILL, sf::Vector2f( 5.f, 5.f ) );
             inventory_widgets_.push_back(obj_image);
             ++pos.left;
 
             //Object Name
             auto obj_label = sfg::Label::Create();
             obj_label->SetText(obj.GetParent()->GetName());
-            inventory_table->Attach(obj_label, pos, sfg::Table::FILL | sfg::Table::EXPAND, sfg::Table::FILL, sf::Vector2f( 10.f, 10.f ) );
+            inventory_table->Attach(obj_label, pos, sfg::Table::FILL | sfg::Table::EXPAND, sfg::Table::FILL, sf::Vector2f( 5.f, 5.f ) );
             inventory_widgets_.push_back(obj_label);
             ++pos.left;
             
@@ -404,7 +405,7 @@ void Wasteland::HandlePlayerInventory()
             std::stringstream ss;
             ss<<obj.GetQuantity();
             obj_qty->SetText(ss.str());
-            inventory_table->Attach(obj_qty, pos, sfg::Table::FILL | sfg::Table::EXPAND, sfg::Table::FILL, sf::Vector2f( 10.f, 10.f ) );
+            inventory_table->Attach(obj_qty, pos, sfg::Table::FILL | sfg::Table::EXPAND, sfg::Table::FILL, sf::Vector2f( 5.f, 5.f ) );
             inventory_widgets_.push_back(obj_qty);
             ++pos.left;
             
@@ -413,14 +414,14 @@ void Wasteland::HandlePlayerInventory()
             ss.clear();
             ss<<obj.GetParent()->GetWeight() * obj.GetQuantity();
             obj_wt->SetText(ss.str());
-            inventory_table->Attach(obj_wt, pos, sfg::Table::FILL | sfg::Table::EXPAND, sfg::Table::FILL, sf::Vector2f( 10.f, 10.f ) );
+            inventory_table->Attach(obj_wt, pos, sfg::Table::FILL | sfg::Table::EXPAND, sfg::Table::FILL, sf::Vector2f( 5.f, 5.f ) );
             inventory_widgets_.push_back(obj_wt);
             ++pos.left;
             
             //Drop button
             auto btn = sfg::Button::Create();
             btn->SetLabel("Drop");
-            inventory_table->Attach(btn, pos, sfg::Table::FILL | sfg::Table::EXPAND, sfg::Table::FILL, sf::Vector2f( 10.f, 10.f ) );
+            inventory_table->Attach(btn, pos, sfg::Table::FILL | sfg::Table::EXPAND, sfg::Table::FILL, sf::Vector2f( 5.f, 5.f ) );
             ++pos.left;
             uint32_t id = obj.GetUID();
             uint32_t qty = obj.GetQuantity();
