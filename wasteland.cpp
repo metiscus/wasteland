@@ -35,34 +35,10 @@ Wasteland::Wasteland()
     red->setRepeated(true);
     textures_[0] = red;
 
-    //auto green = std::make_shared<sf::Texture>();
-    //green->create(1,1);
-    //uint8_t green_b[] = { 100, 255, 100, 255 };
-    //green->update(green_b);
-    //green->setRepeated(true);
-    //textures_[1] = green;
-
-    //auto blue = std::make_shared<sf::Texture>();
-    //blue->create(1,1);
-    //uint8_t blue_b[] = { 200, 200, 200, 255 };
-    //blue->update(blue_b);
-    //blue->setRepeated(true);
-    //textures_[2] = blue;
-
     auto reds = std::make_shared<sf::Sprite>();
     reds->setTexture(*red);
     reds->setScale(sf::Vector2f(32.0f, 32.0f));
     sprites_[0] = reds;
-
-    //auto blues = std::make_shared<sf::Sprite>();
-    //blues->setTexture(*blue);
-    //blues->setScale(sf::Vector2f(32.0f, 32.0f));
-    //sprites_[2] = blues;
-
-    //auto greens = std::make_shared<sf::Sprite>();
-    //greens->setTexture(*green);
-    //greens->setScale(sf::Vector2f(32.0f, 32.0f));
-    //sprites_[1] = greens;
 
     player_->SetPosition(sf::Vector2f(1.0, 1.0));
 
@@ -565,6 +541,11 @@ void Wasteland::LoadMap(std::shared_ptr<sf::Image> img)
     map_->AddCharacter(dog);
 }
 
+void Wasteland::SetMap(std::shared_ptr<Map> map)
+{
+    map_ = map;
+}
+
 std::string Wasteland::GetStatusLine()
 {
     char buffer[1000];
@@ -703,9 +684,13 @@ int main(int argc, char** argv)
 {
     std::unique_ptr<Wasteland> game(new Wasteland());
     //game->LoadMap("data/test.map");
-    auto mapImg = std::make_shared<sf::Image>();
-    mapImg->loadFromFile("data/map.png");
-    game->LoadMap(mapImg);
+    //auto mapImg = std::make_shared<sf::Image>();
+    //mapImg->loadFromFile("data/map.png");
+    //game->LoadMap(mapImg);
+    
+    auto gen = LevelGen();
+    gen.Generate(0, 128, 128);
+    game->SetMap(gen.GetMap());
     game->Run();
     return 0;
 }

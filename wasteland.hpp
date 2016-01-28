@@ -2,6 +2,7 @@
 #define WASTELAND_HPP_INCLUDED
 
 #include "map.hpp"
+#include "levelgen.hpp"
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <unordered_map>
@@ -66,6 +67,7 @@ public:
     void Run();
     void LoadMap(const std::string& filename);
     void LoadMap(std::shared_ptr<sf::Image> img);
+    void SetMap(std::shared_ptr<Map> map);
 
 private:
     void HandlePlayerMovement(PlayerMovement action);

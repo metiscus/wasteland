@@ -16,6 +16,27 @@ MapTile::MapTile()
     radiation = 0.0f;
 }
 
+void MapTile::SetFromType(TileType type)
+{
+    this->type = type;
+    switch(type)
+    {
+        case tile_Ground:
+        case tile_Empty:
+            passable = true;
+            break;
+
+        case tile_Wall:
+        case tile_Water:
+            passable = false;
+            break;
+
+        default:
+            assert(false);
+            type = tile_Invalid;
+    }
+}
+
 inline void DeserializeTile(const rapidxml::xml_node<> *tile_node, MapTile& tile);
 inline void SerializeTile(rapidxml::xml_node<> *map_node, const MapTile& tile);
 
@@ -68,25 +89,7 @@ std::shared_ptr<Map> Map::Load(std::shared_ptr<sf::Image> img)
 
             TileType type = (TileType)(uint32_t)pix.r;
 
-            ret->tiles_[xx+yy*size.x].type = type;
-
-            //TODO: make this better
-            switch(type)
-            {
-                case tile_Ground:
-                case tile_Empty:
-                    ret->tiles_[xx+yy*size.x].passable = true;
-                    break;
-
-                case tile_Wall:
-                case tile_Water:
-                    ret->tiles_[xx+yy*size.x].passable = false;
-                    break;
-
-                default:
-                    assert(false);
-                    ret->tiles_[xx+yy*size.x].type = tile_Invalid;
-            }
+            ret->tiles_[xx+yy*size.x].SetFromType(type);
         }
     }
     return ret;

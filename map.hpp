@@ -30,6 +30,8 @@ struct MapTile
     bool passable;
     std::list<Object::Instance> objects;
     float radiation;
+    
+    void SetFromType(TileType type);
 };
 
 class Map final
