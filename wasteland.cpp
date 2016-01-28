@@ -682,12 +682,7 @@ void Wasteland::DoCommand(const std::string& str)
 
 int main(int argc, char** argv)
 {
-    std::unique_ptr<Wasteland> game(new Wasteland());
-    //game->LoadMap("data/test.map");
-    //auto mapImg = std::make_shared<sf::Image>();
-    //mapImg->loadFromFile("data/map.png");
-    //game->LoadMap(mapImg);
-    
+    std::unique_ptr<Wasteland> game(new Wasteland());    
     auto gen = LevelGen();
     gen.Generate(0, 128, 128);
     game->SetMap(gen.GetMap());
