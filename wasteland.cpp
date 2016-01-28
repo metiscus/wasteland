@@ -12,7 +12,6 @@
 
 Wasteland::Wasteland()
     : should_quit_(false)
-    , player_(new Character())
     , turn_(0)
     , console_(false)
     , light_radius_(10)
@@ -27,6 +26,13 @@ Wasteland::Wasteland()
     CreateSprite(5, "data/45_pistol.png", sf::Vector2f(0.5, 0.5));
     CreateSprite(6, "data/wild_dog.png", sf::Vector2f(0.5, 0.5f));
 
+    player_ = std::make_shared<Character>();
+    CharacterTraits traits;
+    traits.is_player = 1;
+    player_->SetTraits(traits);
+    player_->SetPosition(sf::Vector2f(1.0, 1.0));
+    player_->SetSpriteId(3);
+
     //TODO: replace this debug art with something else
     auto red = std::make_shared<sf::Texture>();
     red->create(1,1);
@@ -39,8 +45,6 @@ Wasteland::Wasteland()
     reds->setTexture(*red);
     reds->setScale(sf::Vector2f(32.0f, 32.0f));
     sprites_[0] = reds;
-
-    player_->SetPosition(sf::Vector2f(1.0, 1.0));
 
     view_.setCenter(player_->GetPosition());
     window_->setView(view_);
@@ -106,6 +110,7 @@ void Wasteland::ProcessInput()
 
         if (event.type == sf::Event::KeyPressed)
         {
+            // currently i'm unable to cleanly implement commands that arent part of the console
             if(console_)
             {
                 //TODO: do this better
@@ -272,12 +277,6 @@ void Wasteland::Draw()
         }
     }
 
-    //TODO: draw projectiles from world
-    sprites_[3]->setPosition(player_->GetPosition() * 32.0f + sf::Vector2f(16, 16));
-    sprites_[3]->setOrigin(sf::Vector2f(32,32));
-    auto facing = player_->GetFacing();
-    sprites_[3]->setRotation(180.0 / 3.14159 * atan2(facing.x, -facing.y));
-
     window_->draw(*sprites_[3]);
 
     /// Print text elements
@@ -318,7 +317,7 @@ void Wasteland::Draw()
 
 void Wasteland::HandlePlayerInventory()
 {
-    //TODO: handle dropping items
+    //TODO: handle dropping specific items
     inventory_->RemoveAll();
     buttons_.clear();
     std::string inventory_string;
@@ -465,6 +464,11 @@ void Wasteland::UpdateMap()
         auto characters = map_->GetCharacters();
         for(auto chr : characters)
         {
+            if(chr->GetTraits().is_player == 1)
+            {
+                continue;
+            }
+
             if(chr->GetTraits().beast == 1)
             {
                 // do beast ai which in this case is just simple pursuit
@@ -510,40 +514,14 @@ void Wasteland::UpdateVisited()
 
 void Wasteland::LoadMap(const std::string& filename)
 {
-    map_ = Map::Load(filename);
-}
-
-void Wasteland::LoadMap(std::shared_ptr<sf::Image> img)
-{
-    map_ = Map::Load(img);
-
-    //testing
-    //TODO: replace with an actual generated level soon
-    map_->SetRadiation(10, 10, 0.5);
-    map_->SetRadiation(11, 10, 0.25);
-    map_->SetRadiation(12, 10, 0.1);
-    map_->SetRadiation(10, 11, 0.5);
-    map_->SetRadiation(11, 11, 0.25);
-    map_->SetRadiation(12, 11, 0.1);
-    map_->SetRadiation(10, 9, 0.5);
-    map_->SetRadiation(11, 9, 0.25);
-    map_->SetRadiation(12, 9, 0.1);
-
-    auto instance = Object::CreateInstance(1, 1);
-    map_->Get(3,4).objects.push_back(instance);
-
-    auto dog = std::make_shared<Character>();
-    dog->SetPosition(sf::Vector2f(10, 2));
-    dog->SetSpriteId(6);
-    CharacterTraits traits;
-    traits.beast = 1;
-    dog->SetTraits(traits);
-    map_->AddCharacter(dog);
+    auto map = Map::Load(filename);
+    SetMap(map);
 }
 
 void Wasteland::SetMap(std::shared_ptr<Map> map)
 {
     map_ = map;
+    map_->AddCharacter(player_);
 }
 
 std::string Wasteland::GetStatusLine()

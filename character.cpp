@@ -16,6 +16,8 @@ Character::Character()
     facing_ = sf::Vector2f(0., 1.);
     view_range_ = 10;
 
+    traits_.is_player = 0;
+    traits_.intelligent = 1;
     traits_.can_swim = 1;
     traits_.needs_food = 1;
     traits_.beast = 0;

@@ -35,7 +35,7 @@ private:
     std::unordered_map<uint32_t, std::shared_ptr<sf::Sprite> > sprites_;
     std::unordered_map<uint32_t, std::shared_ptr<sf::Texture> > textures_;
     std::unordered_map<uint32_t, std::shared_ptr<sf::Image> > images_;
-    std::unique_ptr<Character> player_;
+    std::shared_ptr<Character> player_;
 
     sf::View view_;
     sf::View text_view_;
@@ -66,7 +66,6 @@ public:
 
     void Run();
     void LoadMap(const std::string& filename);
-    void LoadMap(std::shared_ptr<sf::Image> img);
     void SetMap(std::shared_ptr<Map> map);
 
 private:

@@ -13,10 +13,12 @@ struct CharacterData;
 
 struct CharacterTraits
 {
+    uint64_t is_player : 1;
+    uint64_t intelligent : 1;
     uint64_t needs_food : 1;
     uint64_t can_swim : 1;
     uint64_t beast : 1;
-    uint64_t padding : 62;
+    uint64_t padding : 59;
 };
 
 class Character;
