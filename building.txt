@@ -1,0 +1,17 @@
+==[ Build Instructions ]==
+On Debian Jessie:
+    sudo apt-get build-dep libsfml-dev
+    git clone https://github.com/SFML/SFML.git
+    cd SFML
+    mkdir build
+    cd build
+    cmake ..
+    make -j8
+    sudo make install
+    cd ..
+    cd extern/SFGUI
+    cmake .
+    make -j8
+    make install
+    cd ..
+
