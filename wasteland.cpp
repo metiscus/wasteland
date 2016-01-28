@@ -70,17 +70,30 @@ Wasteland::Wasteland()
 
 void Wasteland::CreateSprite(uint32_t id, const std::string& filename, const sf::Vector2f& scale)
 {
-    auto tex = std::make_shared<sf::Texture>();
-    if(!tex->loadFromFile(filename.c_str()))
+    auto img = std::make_shared<sf::Image>();
+    if(!img->loadFromFile(filename.c_str()))
     {
-        std::cerr<<"Failed to load person texture\n";
+        std::cerr<<"Failed to load image file: "<<filename<<"\n";
+        assert(false);
     }
-    textures_[id] = tex;
+    else
+    {
+        images_[id] = img;
+        auto tex = std::make_shared<sf::Texture>();
+        if(!tex->loadFromImage(*img))
+        {
+            std::cerr<<"Failed to convert image file: "<<filename<<" to texture\n";
+        }
+        else
+        {
+            textures_[id] = tex;
 
-    auto sprite = std::make_shared<sf::Sprite>();
-    sprite->setTexture(*tex);
-    sprite->scale(scale);
-    sprites_[id] = sprite;
+            auto sprite = std::make_shared<sf::Sprite>();
+            sprite->setTexture(*tex);
+            sprite->scale(scale);
+            sprites_[id] = sprite;
+        }
+    }
 }
 
 void Wasteland::Run()
@@ -184,52 +197,44 @@ void Wasteland::ProcessInput()
                         action.type = Action_PlayerMove;
                         action.data = Player_MoveWest;
                         actions_.push(action);
-                        //HandlePlayerMovement(Player_MoveWest);
                         break;
                     case sf::Keyboard::Numpad2:
                     case sf::Keyboard::S:
                         action.type = Action_PlayerMove;
                         action.data = Player_MoveSouth;
                         actions_.push(action);
-                        //HandlePlayerMovement(Player_MoveSouth);
                         break;
                     case sf::Keyboard::Numpad6:
                     case sf::Keyboard::D:
                         action.type = Action_PlayerMove;
                         action.data = Player_MoveEast;
                         actions_.push(action);
-                        //HandlePlayerMovement(Player_MoveEast);
                         break;
                     case sf::Keyboard::Numpad8:
                     case sf::Keyboard::W:
                         action.type = Action_PlayerMove;
                         action.data = Player_MoveNorth;
                         actions_.push(action);
-                        //HandlePlayerMovement(Player_MoveNorth);
                         break;
                     case sf::Keyboard::Numpad3:
                         action.type = Action_PlayerMove;
                         action.data = Player_MoveSouthEast;
                         actions_.push(action);
-                        //HandlePlayerMovement(Player_MoveSouthEast);
                         break;
                     case sf::Keyboard::Numpad1:
                         action.type = Action_PlayerMove;
                         action.data = Player_MoveSouthWest;
                         actions_.push(action);
-                        //HandlePlayerMovement(Player_MoveSouthWest);
                         break;
                     case sf::Keyboard::Numpad9:
                         action.type = Action_PlayerMove;
                         action.data = Player_MoveNorthEast;
                         actions_.push(action);
-                        //HandlePlayerMovement(Player_MoveNorthEast);
                         break;
                     case sf::Keyboard::Numpad7:
                         action.type = Action_PlayerMove;
                         action.data = Player_MoveNorthWest;
                         actions_.push(action);
-                        //HandlePlayerMovement(Player_MoveNorthWest);
                         break;
                     case sf::Keyboard::Equal:
                     case sf::Keyboard::Add:
@@ -379,6 +384,13 @@ void Wasteland::HandlePlayerInventory()
         for(auto obj : objects)
         {
             sf::Rect<sf::Uint32> pos (0, row, 1, 1);
+
+            //Object Image!!!!111
+            auto obj_image = sfg::Image::Create();
+            obj_image->SetImage(*images_[obj.GetParent()->GetSprite()]);
+            inventory_table->Attach(obj_image, pos, sfg::Table::FILL | sfg::Table::EXPAND, sfg::Table::FILL, sf::Vector2f( 10.f, 10.f ) );
+            inventory_widgets_.push_back(obj_image);
+            ++pos.left;
 
             //Object Name
             auto obj_label = sfg::Label::Create();
