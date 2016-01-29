@@ -47,6 +47,7 @@ private:
     uint32_t turn_;
     bool console_;
     uint32_t light_radius_;
+    uint32_t in_group_;
 
     std::string console_command_;
     std::string console_output_;

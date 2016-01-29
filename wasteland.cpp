@@ -33,6 +33,8 @@ Wasteland::Wasteland(const std::string& datafile)
     , light_radius_(10)
     , step_(false)
 {
+    in_group_ = 0;
+    
     window_ = std::unique_ptr<sf::RenderWindow>(new sf::RenderWindow(sf::VideoMode(800, 600), "Wasteland"));
 
     // Instead of manually writing a huge if block for each action type,
@@ -312,7 +314,13 @@ void Wasteland::Draw()
                 auto &tile = map_->Get(x, y);
                 if(tile.visited)
                 {
+                    bool show_objects = true;
                     auto sprite = sprites_[(uint32_t)tile.type];
+                    if(tile.group != in_group_ && tile.group != 0)
+                    {
+                        sprite = sprites_[9];
+                        show_objects = false;
+                    }
 
                     sprite->setPosition(sf::Vector2f(x*32, y*32));
                     if(!map_->GetLit(x,y))
@@ -323,10 +331,11 @@ void Wasteland::Draw()
                     {
                         sprite->setColor(sf::Color(255,255,255));
                     }
-                    window_->draw(*sprites_[(uint32_t)tile.type]);
+                    //window_->draw(*sprites_[(uint32_t)tile.type]);
+                    window_->draw(*sprite);
 
                     //TODO: improve this
-                    if(tile.objects.size()>0)
+                    if(show_objects && tile.objects.size()>0)
                     {
                         sprite = sprites_[(uint32_t)(*tile.objects.begin()).GetParent()->GetSprite()];
                         sprite->setPosition(sf::Vector2f(x*32, y*32));
@@ -465,7 +474,7 @@ void Wasteland::HandlePlayerInventory()
                 //Consume button
                 auto btn = sfg::Button::Create();
                 btn->SetLabel("Consume");
-                inventory_table->Attach(btn, pos, sfg::Table::FILL | sfg::Table::EXPAND, sfg::Table::FILL, sf::Vector2f( 5.f, 5.f ) );
+                inventory_table->Attach(btn, pos, sfg::Table::FILL | sfg::Table::EXPAND, sfg::Table::FILL|sfg::Table::EXPAND, sf::Vector2f( 5.f, 5.f ) );
                 ++pos.left;
                 uint32_t id = obj.GetId();
                 
@@ -544,6 +553,7 @@ void Wasteland::OnPlayerMove(const Action& action)
     {
         tile.visited = true;
         player_->SetFacing(offset);
+        in_group_ = tile.group;
     }
 
     player_->SetPosition(move_to_pos);

@@ -14,6 +14,7 @@ enum ObjectType
     object_Water,
     object_Weapon,
     object_Armor,
+    object_Ammo,
 
     object_Count
 };

@@ -70,6 +70,14 @@ void LevelGen::Generate(uint32_t seed, uint32_t width, uint32_t height)
         
         map_->Get(x, y + hheight /2).SetFromType(tile_Ground);
         
+        for(uint32_t yy=1; yy<hheight-1; ++yy)
+        {
+            for(uint32_t xx=1; xx<hwidth-1; ++xx)
+            {
+                map_->Get(x + xx, y+yy).group = ii+1;
+            }
+        }
+        
         if(house_item(generator) < 40)
         {
             if(house_item(generator) < 50)

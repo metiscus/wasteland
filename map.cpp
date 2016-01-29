@@ -14,6 +14,7 @@ MapTile::MapTile()
     visited   = false;
     passable  = false;
     radiation = 0.0f;
+    group     = 0;
 }
 
 void MapTile::SetFromType(TileType type)

@@ -30,6 +30,7 @@ struct MapTile
     bool passable;
     std::list<Object::Instance> objects;
     float radiation;
+    uint32_t group;
     
     void SetFromType(TileType type);
     void AddObject(ObjectId id, uint32_t qty);
