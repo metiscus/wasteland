@@ -67,7 +67,8 @@ private:
         Action_Invalid,
         Action_PlayerMove,
         Action_PlayerPickup,
-        Action_PlayerDrop
+        Action_PlayerDrop,
+        Action_PlayerConsume
     };
     
     struct Action
@@ -105,6 +106,7 @@ private:
     void OnPlayerDropItem(const Action& action);
     void OnPlayerPickup(const Action& action);
     void OnPlayerMove(const Action& action);
+    void OnPlayerConsume(const Action& action);
 };
 
 #endif
