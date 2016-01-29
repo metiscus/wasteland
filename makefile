@@ -1,7 +1,7 @@
 CC=gcc
 CXX=g++
 CFLAGS=-ggdb -fvar-tracking-assignments -Wall -Wextra -std=gnu99 -fsanitize=address
-CXXFLAGS=-ggdb -fvar-tracking-assignments -Wall -Wextra --std=gnu++14 -Iextern -fsanitize=address
+CXXFLAGS=-ggdb -fvar-tracking-assignments -Wall -Wextra --std=gnu++11 -Iextern -fsanitize=address
 LDFLAGS=-fsanitize=address
 
 .POSIX:

@@ -83,13 +83,14 @@ private:
     std::map<enum ActionType, ActionHandler> action_handlers_;
     
 public:
-    Wasteland();
+    explicit Wasteland(const std::string& datafile = "");
 
     void Run();
     void LoadMap(const std::string& filename);
     void SetMap(std::shared_ptr<Map> map);
 
 private:
+    void LoadData(const std::string& filename);
     void ProcessActionQueue();
     void HandlePlayerInventory();
     void UpdateVisited();

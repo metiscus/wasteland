@@ -4,7 +4,9 @@
 #include "utility.hpp"
 #include <sstream>
 #include <boost/lexical_cast.hpp>
-
+#include <rapidxml.hpp>
+#include <rapidxml_print.hpp>
+#include <rapidxml_utils.hpp>
 #include <SFML/Window.hpp>
 
 #include <iostream>
@@ -24,15 +26,14 @@ Wasteland::Action::Action()
     extra = 0;
 }
 
-
-Wasteland::Wasteland()
+Wasteland::Wasteland(const std::string& datafile)
     : should_quit_(false)
     , turn_(0)
     , console_(false)
     , light_radius_(10)
     , step_(false)
 {
-    window_ = std::make_unique<sf::RenderWindow>(sf::VideoMode(800, 600), "Wasteland");
+    window_ = std::unique_ptr<sf::RenderWindow>(new sf::RenderWindow(sf::VideoMode(800, 600), "Wasteland"));
 
     // Instead of manually writing a huge if block for each action type,
     // I used a std::map of the enum to a function pointer and let action_handlers_[yourtypehere] 
@@ -41,19 +42,14 @@ Wasteland::Wasteland()
     AddActionHandler(Wasteland::Action_PlayerPickup, Wasteland::OnPlayerPickup);
     AddActionHandler(Wasteland::Action_PlayerDrop, Wasteland::OnPlayerDropItem);
 
-    CreateSprite(1, "data/grass.png", sf::Vector2f(0.5, 0.5));
-    CreateSprite(2, "data/walls.png", sf::Vector2f(0.5, 0.5));
-    CreateSprite(3, "data/person.png", sf::Vector2f(0.5, 0.5));
-    CreateSprite(4, "data/combat_knife.png", sf::Vector2f(0.5, 0.5));
-    CreateSprite(5, "data/45_pistol.png", sf::Vector2f(0.5, 0.5));
-    CreateSprite(6, "data/wild_dog.png", sf::Vector2f(0.5, 0.5f));
+    zoom_ = 1.0f;
+    menu_ = "";
 
     player_ = std::make_shared<Character>();
     CharacterTraits traits;
     traits.is_player = 1;
     player_->SetTraits(traits);
     player_->SetPosition(sf::Vector2f(1.0, 1.0));
-    player_->SetSpriteId(3);
 
     //TODO: replace this debug art with something else
     auto red = std::make_shared<sf::Texture>();
@@ -68,20 +64,32 @@ Wasteland::Wasteland()
     reds->setScale(sf::Vector2f(32.0f, 32.0f));
     sprites_[0] = reds;
 
-    view_.setCenter(player_->GetPosition());
+    if(datafile != "")
+    {
+        LoadData(datafile);
+    }
+    else
+    {
+        CreateSprite(1, "data/grass.png", sf::Vector2f(0.5, 0.5));
+        CreateSprite(2, "data/walls.png", sf::Vector2f(0.5, 0.5));
+        CreateSprite(3, "data/person.png", sf::Vector2f(0.5, 0.5));
+        CreateSprite(4, "data/combat_knife.png", sf::Vector2f(0.5, 0.5));
+        CreateSprite(5, "data/45_pistol.png", sf::Vector2f(0.5, 0.5));
+        CreateSprite(6, "data/wild_dog.png", sf::Vector2f(0.5, 0.5f));
+
+        player_->SetSpriteId(3);
+
+        font_.loadFromFile("data/font.ttf");
+    
+        Object::BuildFromString(std::string("1,3,10,4,Combat Knife,melee,5"));
+        Object::BuildFromString(std::string("2,1,10,0,Ration,nutrition,500"));
+        Object::BuildFromString(std::string("3,3,18,5,.45 Pistol,melee,1,attack,15,range,80,ammo_cap,8,ammo_type,45"));
+        Object::BuildFromString(std::string("4,3,18,0,Teeth,melee,3"));
+    }
+    
+    view_.setCenter(player_->GetPosition() * 32.0f);
     window_->setView(view_);
 
-    zoom_ = 1.0f;
-
-    font_.loadFromFile("data/font.ttf");
-    
-    menu_ = "";
-
-    Object::BuildFromString(std::string("1,3,10,4,Combat Knife,melee,5"));
-    Object::BuildFromString(std::string("2,1,10,0,Ration,nutrition,500"));
-    Object::BuildFromString(std::string("3,3,18,5,.45 Pistol,melee,1,attack,15,range,80,ammo_cap,8,ammo_type,45"));
-    Object::BuildFromString(std::string("4,3,18,0,Teeth,melee,3"));
-    
     // inventory window
     equipment_ =  sfg::Window::Create();
     equipment_->SetTitle("Equipment");
@@ -257,11 +265,6 @@ void Wasteland::ProcessInput()
 
                         }
                 }
-
-                //TODO: this is a hack
-                player_->ChangeFood(-1);
-                
-                step_ = true;
             }
         }
     }
@@ -282,6 +285,8 @@ void Wasteland::ProcessActionQueue()
     {
         // this is ugly
         HandlePlayerInventory();
+        player_->ChangeFood(-1);
+        step_ = true;
     }
 }
 
@@ -388,7 +393,6 @@ void Wasteland::Draw()
 
 void Wasteland::HandlePlayerInventory()
 {
-    //TODO: handle dropping specific items
     inventory_->RemoveAll();
     inventory_widgets_.clear();
     std::string inventory_string;
@@ -406,7 +410,7 @@ void Wasteland::HandlePlayerInventory()
         {
             sf::Rect<sf::Uint32> pos (0, row, 1, 1);
 
-            //Object Image!!!!111
+            //Object Image
             auto obj_image = sfg::Image::Create();
             obj_image->SetImage(*images_[obj.GetParent()->GetSprite()]);
             inventory_table->Attach(obj_image, pos, sfg::Table::FILL | sfg::Table::EXPAND, sfg::Table::FILL, sf::Vector2f( 5.f, 5.f ) );
@@ -623,6 +627,8 @@ void Wasteland::SetMap(std::shared_ptr<Map> map)
 {
     map_ = map;
     map_->AddCharacter(player_);
+    step_ = true;
+    UpdateMap();
 }
 
 std::string Wasteland::GetStatusLine()
@@ -763,9 +769,82 @@ void Wasteland::DoCommand(const std::string& str)
     }
 }
 
+void Wasteland::LoadData(const std::string& filename)
+{
+    using namespace rapidxml;
+    
+    file<> infile(filename.c_str());
+    xml_document<> doc;
+    doc.parse<0>(infile.data());
+
+    xml_node<> *config = doc.first_node("config");
+    if(config)
+    {
+        // sprites
+        xml_node<> *sprite = config->first_node("sprite");
+        while(sprite != nullptr)
+        {
+            // create sprites
+            uint32_t id = 0;
+            float scale = 1.0f;
+            id    = boost::lexical_cast<uint32_t>(sprite->first_attribute("id")->value());
+            
+            if(sprite->first_attribute("scale"))
+            {
+                scale = boost::lexical_cast<float>(sprite->first_attribute("scale")->value());
+            }
+            
+            if(id>0 && sprite->value())
+            {
+                CreateSprite(id, sprite->value(), sf::Vector2f(scale, scale));
+            }
+            
+            sprite = sprite->next_sibling("sprite");
+        }
+        
+        // font
+        xml_node<> *font = config->first_node("font");
+        if(font && font->value())
+        {
+            font_.loadFromFile(font->value());
+        }
+        
+        // player
+        xml_node<> *player = config->first_node("player");
+        if(player)
+        {
+            uint32_t x = 1;
+            uint32_t y = 1;
+            auto att_x = player->first_attribute("x");
+            auto att_y = player->first_attribute("y");
+            if(att_x && att_y)
+            {
+                x = boost::lexical_cast<uint32_t>(player->first_attribute("x")->value());
+                y = boost::lexical_cast<uint32_t>(player->first_attribute("y")->value());
+            }
+            
+            player_->SetPosition(sf::Vector2f((float)x, (float)y));
+            
+            if(player->first_attribute("sprite"))
+            {
+                player_->SetSpriteId(boost::lexical_cast<uint32_t>(player->first_attribute("sprite")->value()));
+            }
+        }
+        
+        // objects
+        xml_node<> *object = config->first_node("object");
+        while(object != nullptr)
+        {
+            Object::BuildFromString(object->value());
+            
+            object = object->next_sibling("object");
+        }
+    }
+}
+
 int main(int argc, char** argv)
 {
-    std::unique_ptr<Wasteland> game(new Wasteland());    
+    std::unique_ptr<Wasteland> game(new Wasteland("data/wasteland.xml"));    
     auto gen = LevelGen();
     gen.Generate(0, 128, 128);
     game->SetMap(gen.GetMap());

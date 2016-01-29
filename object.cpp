@@ -82,7 +82,7 @@ Object::Instance Object::CreateInstance(ObjectId id, uint32_t qty)
     return Object::Instance(GetObject(id), qty);
 }
 
-ObjectType Object::StringToType(const std::string str)
+ObjectType Object::StringToType(const std::string& str)
 {
     if(str == "OBJECT_FOOD")
     {
@@ -198,7 +198,7 @@ void Object::Instance::SetQuantity(uint32_t qty)
 
 void Object::Instance::ChangeQuantity(int32_t qty)
 {
-    if(qty<0 && -qty>quantity_)
+    if(qty<0 && -qty>(int32_t)quantity_)
     {
         quantity_ = 0;
     }

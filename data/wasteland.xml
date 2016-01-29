@@ -1,0 +1,14 @@
+<config>
+	<font>data/font.ttf</font>
+	<sprite id="1" scale="0.5">data/grass.png</sprite>
+	<sprite id="2" scale="0.5">data/walls.png</sprite>
+	<sprite id="3" scale="0.5">data/person.png</sprite>
+	<sprite id="4" scale="0.5">data/combat_knife.png</sprite>
+	<sprite id="5" scale="0.5">data/45_pistol.png</sprite>
+	<sprite id="6" scale="0.5">data/wild_dog.png</sprite>
+	<player x="5" y="50" sprite="3"/>
+	<object>1,3,10,4,Combat Knife,melee,5</object>
+	<object>2,1,10,0,Ration,nutrition,500</object>
+	<object>3,3,18,5,.45 Pistol,melee,1,attack,15,range,80,ammo_cap,8,ammo_type,45</object>
+	<object>4,3,18,0,Teeth,melee,3</object>
+</config>

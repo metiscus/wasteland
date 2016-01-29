@@ -62,7 +62,7 @@ public:
     static ObjectPtr BuildFromString(const std::string& str);
     std::string ToString() const;
     static Instance CreateInstance(ObjectId id, uint32_t qty);
-    static ObjectType StringToType(const std::string str);
+    static ObjectType StringToType(const std::string& str);
 
     ObjectId GetId() const;
     ObjectType GetType() const;

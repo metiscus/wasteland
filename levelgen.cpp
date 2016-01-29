@@ -28,9 +28,9 @@ void LevelGen::Generate(uint32_t seed, uint32_t width, uint32_t height)
     std::uniform_int_distribution<uint32_t> tile_Type((uint32_t)tile_Ground, (uint32_t)tile_Count-1);
     uint32_t box = (uint32_t)(0.9 * std::min(width, height));
     std::uniform_int_distribution<uint32_t> tile(std::min(5U, box), box);
-    for(int yy=0; yy<height; ++yy)
+    for(uint32_t yy=0; yy<height; ++yy)
     {
-        for(int xx=0; xx<width; ++xx)
+        for(uint32_t xx=0; xx<width; ++xx)
         {
             map_->Get(xx, yy).SetFromType(tile_Ground);
         }
