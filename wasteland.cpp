@@ -41,6 +41,8 @@ Wasteland::Wasteland(const std::string& datafile)
     AddActionHandler(Wasteland::Action_PlayerMove, Wasteland::OnPlayerMove);
     AddActionHandler(Wasteland::Action_PlayerPickup, Wasteland::OnPlayerPickup);
     AddActionHandler(Wasteland::Action_PlayerDrop, Wasteland::OnPlayerDropItem);
+    AddActionHandler(Wasteland::Action_PlayerConsume, Wasteland::OnPlayerConsume);
+
 
     zoom_ = 1.0f;
     menu_ = "";
@@ -458,6 +460,25 @@ void Wasteland::HandlePlayerInventory()
                     actions_.push(action);
             });
             
+            if(obj.GetParent()->GetType() == object_Food)
+            {
+                //Consume button
+                auto btn = sfg::Button::Create();
+                btn->SetLabel("Consume");
+                inventory_table->Attach(btn, pos, sfg::Table::FILL | sfg::Table::EXPAND, sfg::Table::FILL, sf::Vector2f( 5.f, 5.f ) );
+                ++pos.left;
+                uint32_t id = obj.GetId();
+                
+                btn->GetSignal( sfg::Button::OnLeftClick ).Connect(
+                    [this, id] () {
+                        Action action;
+                        action.type = Action_PlayerConsume;
+                        action.data = id;
+                        action.extra = 1;
+                        actions_.push(action);
+                });
+            }
+            
             inventory_widgets_.push_back(btn);
             
             ++row;
@@ -552,6 +573,19 @@ void Wasteland::OnPlayerPickup(const Action& action)
     for(auto &itr : removed)
     {
         tile.RemoveObject(itr.first, itr.second);
+    }
+}
+
+void Wasteland::OnPlayerConsume(const Action& action)
+{
+    //TODO this is a proof of concept
+    ObjectId id = (ObjectId)action.data;
+    auto obj = player_->GetInventoryObject(id);
+    if(obj.GetParent()->GetType() == object_Food && obj.GetQuantity() > 0)
+    {
+        uint32_t nutrition = obj.GetParent()->GetProperty("nutrition");
+        player_->ChangeFood((int32_t)nutrition);
+        player_->RemoveInventoryObject(id, 1);
     }
 }
 
