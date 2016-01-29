@@ -37,6 +37,21 @@ void MapTile::SetFromType(TileType type)
     }
 }
 
+void MapTile::AddObject(ObjectId id, uint32_t qty)
+{
+    auto object = std::find_if(objects.begin(), objects.end(), [this, id](const Object::Instance& obj) {
+        return (obj.GetId() == id);
+    });
+    if(object == objects.end())
+    {
+        objects.push_back(Object::CreateInstance(id, qty));
+    }
+    else
+    {
+        object->ChangeQuantity(qty);
+    }
+}
+
 void MapTile::RemoveObject(ObjectId id, uint32_t qty)
 {
     for(auto itr = objects.begin(); itr!=objects.end(); ++itr)

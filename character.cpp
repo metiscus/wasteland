@@ -135,6 +135,7 @@ bool Character::AddInventoryObject(Object::Instance objecti)
     auto object = objecti.GetParent();
     if(object->GetWeight() * objecti.GetQuantity() + inventory_weight_ > max_carry)
     {
+        std::cerr<<"rejecting pickup because I am full\n";
         return false;
     }
     else
@@ -207,27 +208,33 @@ void Character::SetViewRange(uint32_t range)
     view_range_ = range;
 }
 
-void Character::RemoveInventoryObject(uint32_t id, uint32_t qty)
+bool Character::RemoveInventoryObject(uint32_t id, uint32_t qty)
 {
     auto itr = inventory_.find(id);
     if(itr != inventory_.end())
     {
         // decrement the quantity or possibly remove the object
         auto &obj = itr->second;
-        if(obj.GetQuantity() <= qty)
+        if(obj.GetQuantity() == qty)
         {
             inventory_weight_ -= obj.GetParent()->GetWeight() * std::min(obj.GetQuantity(), qty);
             inventory_.erase(itr);
         }
-        else
+        else if(obj.GetQuantity() > qty)
         {
             obj.ChangeQuantity(-int32_t(qty));
             inventory_weight_ -= obj.GetParent()->GetWeight() * qty;
         }
+        else
+        {
+            return false;
+        }
+        return true;
     }
     else {
         assert(false);
     }
+    return false;
 }
 
 void Character::EquipItem(EquipmentSlot slot, uint32_t id)

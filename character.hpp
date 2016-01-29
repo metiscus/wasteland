@@ -85,7 +85,7 @@ public:
     std::vector<Object::Instance> GetInventory();
     std::vector<Object::Instance> GetInventoryObjectsByType(ObjectType type);
     Object::Instance GetInventoryObject(uint32_t uid);
-    void RemoveInventoryObject(uint32_t id, uint32_t qty);
+    bool RemoveInventoryObject(uint32_t id, uint32_t qty);
     
     // equipment
     void EquipItem(EquipmentSlot slot, uint32_t id);

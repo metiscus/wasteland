@@ -4,6 +4,7 @@
 #include "map.hpp"
 #include "levelgen.hpp"
 #include <SFML/Graphics.hpp>
+#include <functional>
 #include <string>
 #include <unordered_map>
 #include "object.hpp"
@@ -63,18 +64,23 @@ private:
     
     enum ActionType
     {
+        Action_Invalid,
         Action_PlayerMove,
-        Action_PlayerPickUp,
+        Action_PlayerPickup,
         Action_PlayerDrop
     };
     
     struct Action
     {
+        Action();
         ActionType type;
         uint32_t data;
+        uint32_t extra;
     };
     
     std::queue<Action> actions_;
+    typedef std::function<void(const Action&)> ActionHandler;
+    std::map<enum ActionType, ActionHandler> action_handlers_;
     
 public:
     Wasteland();
@@ -85,8 +91,7 @@ public:
 
 private:
     void ProcessActionQueue();
-    void HandlePlayerMovement(PlayerMovement action);
-    void HandlePickup();
+    void HandlePlayerInventory();
     void UpdateVisited();
     std::string GetStatusLine();
     void UpdateMap();
@@ -96,8 +101,9 @@ private:
 
     void CreateSprite(uint32_t id, const std::string& filename, const sf::Vector2f& scale);
     
-    void HandlePlayerInventory();
-    void HandlePlayerDropItem(uint32_t id, uint32_t qty);
+    void OnPlayerDropItem(const Action& action);
+    void OnPlayerPickup(const Action& action);
+    void OnPlayerMove(const Action& action);
 };
 
 #endif

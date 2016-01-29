@@ -10,6 +10,21 @@
 #include <iostream>
 #include <cstdio>
 
+
+// Member functions are just normal functions but they have a hidden first parameter for a class instance.
+// The std::bind(&Class::Func, this, std::placeholders::_1) syntax creates an std::function object
+// that takes one explicit parameter and supplies the 'this' pointer from _this_ instance for instance parameter.
+#define AddActionHandler(type, func)\
+    action_handlers_.insert(std::make_pair(type, std::bind(&func, this, std::placeholders::_1)));
+
+Wasteland::Action::Action()
+{
+    type = Action_Invalid;
+    data = 0;
+    extra = 0;
+}
+
+
 Wasteland::Wasteland()
     : should_quit_(false)
     , turn_(0)
@@ -18,6 +33,13 @@ Wasteland::Wasteland()
     , step_(false)
 {
     window_ = std::make_unique<sf::RenderWindow>(sf::VideoMode(800, 600), "Wasteland");
+
+    // Instead of manually writing a huge if block for each action type,
+    // I used a std::map of the enum to a function pointer and let action_handlers_[yourtypehere] 
+    // do the dispatching.
+    AddActionHandler(Wasteland::Action_PlayerMove, Wasteland::OnPlayerMove);
+    AddActionHandler(Wasteland::Action_PlayerPickup, Wasteland::OnPlayerPickup);
+    AddActionHandler(Wasteland::Action_PlayerDrop, Wasteland::OnPlayerDropItem);
 
     CreateSprite(1, "data/grass.png", sf::Vector2f(0.5, 0.5));
     CreateSprite(2, "data/walls.png", sf::Vector2f(0.5, 0.5));
@@ -226,7 +248,7 @@ void Wasteland::ProcessInput()
                         view_.zoom(1.111);
                         break;
                     case sf::Keyboard::G:
-                        action.type = Action_PlayerPickUp;
+                        action.type = Action_PlayerPickup;
                         action.data = 0;
                         actions_.push(action);
                         break;
@@ -247,23 +269,19 @@ void Wasteland::ProcessInput()
 
 void Wasteland::ProcessActionQueue()
 {
-    //TODO: move this to a better place
+    bool processed_action = false;
     while(!actions_.empty())
     {
+        processed_action = true;
         const Action& action = actions_.front();
-        switch(action.type)
-        {
-            case Action_PlayerMove:
-                HandlePlayerMovement((PlayerMovement)action.data);
-                break;
-            case Action_PlayerPickUp:
-                HandlePickup();
-                break;
-            case Action_PlayerDrop:
-                HandlePlayerDropItem(action.data, 1);
-                break;
-        }
+        action_handlers_[action.type](action);
         actions_.pop();
+    }
+    
+    if(processed_action)
+    {
+        // this is ugly
+        HandlePlayerInventory();
     }
 }
 
@@ -432,6 +450,7 @@ void Wasteland::HandlePlayerInventory()
                     Action action;
                     action.type = Action_PlayerDrop;
                     action.data = id;
+                    action.extra = 1;
                     actions_.push(action);
             });
             
@@ -442,43 +461,27 @@ void Wasteland::HandlePlayerInventory()
     }
 }
 
-void Wasteland::HandlePlayerDropItem(uint32_t id, uint32_t qty)
+void Wasteland::OnPlayerDropItem(const Action& action)
 {
+    ObjectId id = action.data;
+    uint32_t qty = action.extra;
     auto obj = player_->GetInventoryObject(id);
 
     auto position = player_->GetPosition();
     auto &tile = map_->Get((uint32_t)position.x, (uint32_t)position.y);
-    //TODO: write a function to handle this cleanly
-    bool was_there = false;
-    for(auto& tgtobj : tile.objects)
+    
+    if(player_->RemoveInventoryObject(id, qty))
     {
-        if(tgtobj.GetId() == id)
-        {
-            std::cerr<<"Found existing item on drop "<<tgtobj.GetQuantity()<<"\n";
-            std::cerr<<"Increasing qty by "<<qty<<"\n";
-            tgtobj.ChangeQuantity(qty);
-            std::cerr<<"After qty "<<tgtobj.GetQuantity()<<"\n";
-            was_there = true;
-            break;
-        }
+        tile.AddObject(id, qty);
     }
-
-    if(!was_there)
-    {
-        tile.objects.push_back(Object::CreateInstance(id, qty));
-    }
-
-    player_->RemoveInventoryObject(id, qty);
-
-    HandlePlayerInventory();
 }
 
-void Wasteland::HandlePlayerMovement(PlayerMovement action)
+void Wasteland::OnPlayerMove(const Action& action)
 {
     ++turn_;
     auto move_to_pos = player_->GetPosition();
     sf::Vector2f offset;
-    switch(action)
+    switch((PlayerMovement)action.data)
     {
         case Player_MoveNorth:
             offset = sf::Vector2f(0.0, -1.0);
@@ -522,12 +525,13 @@ void Wasteland::HandlePlayerMovement(PlayerMovement action)
     view_.setCenter(move_to_pos * 32.0f);
 }
 
-void Wasteland::HandlePickup()
+void Wasteland::OnPlayerPickup(const Action& action)
 {
     auto position = player_->GetPosition();
     auto &tile = map_->Get((uint32_t)position.x, (uint32_t)position.y);
     if(tile.objects.size() == 0)
     {
+        std::cerr<<"nothing there\n";
         return;
     }
 
@@ -545,8 +549,6 @@ void Wasteland::HandlePickup()
     {
         tile.RemoveObject(itr.first, itr.second);
     }
-
-    HandlePlayerInventory();
 }
 
 void Wasteland::UpdateMap()
@@ -723,7 +725,11 @@ void Wasteland::DoCommand(const std::string& str)
             qty = boost::lexical_cast<uint32_t>(strings[2]);
         }
 
-        HandlePlayerDropItem(id, qty);
+        Action action;
+        action.type = Action_PlayerDrop;
+        action.data = id;
+        action.extra = qty;
+        actions_.push(action);
 
         console_command_ = "";
     }
