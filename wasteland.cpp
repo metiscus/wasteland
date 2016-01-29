@@ -323,7 +323,7 @@ void Wasteland::Draw()
                     }
 
                     sprite->setPosition(sf::Vector2f(x*32, y*32));
-                    if(!map_->GetLit(x,y))
+                    if(!map_->GetLit(x,y) || !show_objects)
                     {
                         sprite->setColor(sf::Color(100,100,100));
                     }
