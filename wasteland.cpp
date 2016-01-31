@@ -315,7 +315,7 @@ void Wasteland::Draw()
                 if(tile.visited)
                 {
                     bool show_objects = true;
-                    auto sprite = sprites_[(uint32_t)tile.type];
+                    auto sprite = sprites_[(uint32_t)tile.sprite];
                     if(tile.group != in_group_ && tile.group != 0)
                     {
                         sprite = sprites_[9];

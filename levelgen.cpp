@@ -74,7 +74,10 @@ void LevelGen::Generate(uint32_t seed, uint32_t width, uint32_t height)
         {
             for(uint32_t xx=1; xx<hwidth-1; ++xx)
             {
-                map_->Get(x + xx, y+yy).group = ii+1;
+                auto& tile = map_->Get(x + xx, y+yy);
+                tile.group = ii+1;
+                tile.sprite = 11;
+                
             }
         }
         

@@ -35,7 +35,9 @@ void MapTile::SetFromType(TileType type)
         default:
             assert(false);
             type = tile_Invalid;
-    }
+	}
+
+	sprite = (uint32_t)type;
 }
 
 void MapTile::AddObject(ObjectId id, uint32_t qty)

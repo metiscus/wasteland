@@ -31,6 +31,7 @@ struct MapTile
     std::list<Object::Instance> objects;
     float radiation;
     uint32_t group;
+    uint32_t sprite;
     
     void SetFromType(TileType type);
     void AddObject(ObjectId id, uint32_t qty);
