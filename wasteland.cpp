@@ -841,6 +841,10 @@ void Wasteland::LoadData(const std::string& filename)
             if(id>0 && sprite->value())
             {
                 CreateSprite(id, sprite->value(), sf::Vector2f(scale, scale));
+				if(sprite->first_attribute("name"))
+				{
+					Map::AddTileMapping(sprite->first_attribute("name")->value(), id);
+				}
             }
             
             sprite = sprite->next_sibling("sprite");

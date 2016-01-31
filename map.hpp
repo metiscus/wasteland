@@ -10,6 +10,7 @@
 #include <list>
 #include "fov.h"
 #include "object.hpp"
+#include <map>
 
 enum TileType
 {
@@ -48,12 +49,17 @@ private:
     std::list<CharacterPtr> characters_;
 
     fov_settings_type fov_settings_;
+    
+    static std::unordered_map<std::string, uint32_t> sprite_map_;
 public:
     Map();
     ~Map();
     static std::shared_ptr<Map> Load(std::shared_ptr<sf::Image> img);
     static std::shared_ptr<Map> Load(const std::string& filename);
     void Save(const char* filename) const;
+    
+    static void AddTileMapping(const std::string& name, uint32_t id);
+    static uint32_t GetTileMapping(const std::string& name);
     
     const MapTile& Get(uint32_t x, uint32_t y) const;
     MapTile& Get(uint32_t x, uint32_t y);

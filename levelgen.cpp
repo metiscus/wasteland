@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <cmath>
 #include <random>
+#include "map.hpp"
 
 LevelGen::LevelGen()
     : map_(new Map())
@@ -76,8 +77,7 @@ void LevelGen::Generate(uint32_t seed, uint32_t width, uint32_t height)
             {
                 auto& tile = map_->Get(x + xx, y+yy);
                 tile.group = ii+1;
-                tile.sprite = 11;
-                
+                tile.sprite = Map::GetTileMapping("floor");
             }
         }
         

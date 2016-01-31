@@ -1,16 +1,16 @@
 <config>
 	<font>data/font.ttf</font>
-	<sprite id="1" scale="0.5">data/grass.png</sprite>
-	<sprite id="2" scale="0.5">data/walls.png</sprite>
-	<sprite id="3" scale="0.5">data/person.png</sprite>
-	<sprite id="4" scale="0.5">data/combat_knife.png</sprite>
-	<sprite id="5" scale="0.5">data/45_pistol.png</sprite>
-	<sprite id="6" scale="0.5">data/wild_dog.png</sprite>
-	<sprite id="7" scale="0.5">data/sandwich.png</sprite>
-	<sprite id="8" scale="0.5">data/45_ammo.png</sprite>
-	<sprite id="9" scale="0.5">data/roof.png</sprite>
-	<sprite id="10" scale="0.5">data/water.png</sprite>
-	<sprite id="11" scale="0.5">data/floor.png</sprite>
+	<sprite id="1" scale="0.5" name="grass">data/grass.png</sprite>
+	<sprite id="2" scale="0.5" name="walls">data/walls.png</sprite>
+	<sprite id="3" scale="0.5" name="person">data/person.png</sprite>
+	<sprite id="4" scale="0.5" name="knife">data/combat_knife.png</sprite>
+	<sprite id="5" scale="0.5" name="45_pistol">data/45_pistol.png</sprite>
+	<sprite id="6" scale="0.5" name="dog">data/wild_dog.png</sprite>
+	<sprite id="7" scale="0.5" name="sandwich">data/sandwich.png</sprite>
+	<sprite id="8" scale="0.5" name="45_ammo">data/45_ammo.png</sprite>
+	<sprite id="9" scale="0.5" name="roof">data/roof.png</sprite>
+	<sprite id="10" scale="0.5" name="water">data/water.png</sprite>
+	<sprite id="11" scale="0.5" name="floor">data/floor.png</sprite>
 	<player x="5" y="50" sprite="3"/>
 	<object>1,3,10,4,Combat Knife,melee,5</object>
 	<object>2,1,10,7,Sandwich,nutrition,500</object>

@@ -79,6 +79,18 @@ void MapTile::RemoveObject(ObjectId id, uint32_t qty)
 inline void DeserializeTile(const rapidxml::xml_node<> *tile_node, MapTile& tile);
 inline void SerializeTile(rapidxml::xml_node<> *map_node, const MapTile& tile);
 
+std::unordered_map<std::string, uint32_t> Map::sprite_map_;
+
+void Map::AddTileMapping(const std::string& name, uint32_t id)
+{
+	sprite_map_[name] = id;
+}
+
+uint32_t Map::GetTileMapping(const std::string& name)
+{
+	return sprite_map_[name];
+}
+
 std::shared_ptr<Map> Map::Load(const std::string& filename)
 {
     using namespace rapidxml;
