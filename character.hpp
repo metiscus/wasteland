@@ -26,7 +26,8 @@ typedef std::shared_ptr<Character> CharacterPtr;
 
 enum EquipmentSlot
 {
-    Slot_Weapon,
+    Slot_First,
+    Slot_Weapon = Slot_First,
     
     Slot_Count
 };
@@ -49,7 +50,7 @@ class Character
 
     uint32_t sprite_id_;
     
-    std::array<uint32_t, Slot_Count> equipement_;
+    std::array<ObjectId, Slot_Count> equipement_;
 
 
 public:
@@ -84,13 +85,13 @@ public:
     bool AddInventoryObject(Object::Instance object);
     std::vector<Object::Instance> GetInventory();
     std::vector<Object::Instance> GetInventoryObjectsByType(ObjectType type);
-    Object::Instance GetInventoryObject(uint32_t uid);
-    bool RemoveInventoryObject(uint32_t id, uint32_t qty);
+    Object::Instance GetInventoryObject(ObjectId uid);
+    bool RemoveInventoryObject(ObjectId id, uint32_t qty);
     
     // equipment
-    void EquipItem(EquipmentSlot slot, uint32_t id);
+    void EquipItem(EquipmentSlot slot, ObjectId id);
     void UnequipItem(EquipmentSlot slot);
-    uint32_t GetEquippedItem(EquipmentSlot slot);
+    ObjectId GetEquippedItem(EquipmentSlot slot);
 };
 
 

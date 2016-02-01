@@ -185,7 +185,7 @@ std::vector<Object::Instance> Character::GetInventoryObjectsByType(ObjectType ty
     return ret;
 }
 
-Object::Instance Character::GetInventoryObject(uint32_t uid)
+Object::Instance Character::GetInventoryObject(ObjectId uid)
 {
     auto itr = inventory_.find(uid);
     if(itr == inventory_.end())
@@ -208,7 +208,7 @@ void Character::SetViewRange(uint32_t range)
     view_range_ = range;
 }
 
-bool Character::RemoveInventoryObject(uint32_t id, uint32_t qty)
+bool Character::RemoveInventoryObject(ObjectId id, uint32_t qty)
 {
     auto itr = inventory_.find(id);
     if(itr != inventory_.end())
@@ -217,6 +217,14 @@ bool Character::RemoveInventoryObject(uint32_t id, uint32_t qty)
         auto &obj = itr->second;
         if(obj.GetQuantity() == qty)
         {
+            for(uint32_t slot = Slot_First; slot < Slot_Count; ++slot)
+            {
+                if(equipement_[slot] == id)
+                {
+                    UnequipItem((EquipmentSlot)slot);
+                }
+            }
+
             inventory_weight_ -= obj.GetParent()->GetWeight() * std::min(obj.GetQuantity(), qty);
             inventory_.erase(itr);
         }
@@ -237,7 +245,7 @@ bool Character::RemoveInventoryObject(uint32_t id, uint32_t qty)
     return false;
 }
 
-void Character::EquipItem(EquipmentSlot slot, uint32_t id)
+void Character::EquipItem(EquipmentSlot slot, ObjectId id)
 {
     equipement_[slot] = id;
 }
@@ -247,7 +255,7 @@ void Character::UnequipItem(EquipmentSlot slot)
     equipement_[slot] = 0;
 }
 
-uint32_t Character::GetEquippedItem(EquipmentSlot slot)
+ObjectId Character::GetEquippedItem(EquipmentSlot slot)
 {
     return equipement_[slot];
 }

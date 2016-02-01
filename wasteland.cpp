@@ -44,7 +44,8 @@ Wasteland::Wasteland(const std::string& datafile)
     AddActionHandler(Wasteland::Action_PlayerPickup, Wasteland::OnPlayerPickup);
     AddActionHandler(Wasteland::Action_PlayerDrop, Wasteland::OnPlayerDropItem);
     AddActionHandler(Wasteland::Action_PlayerConsume, Wasteland::OnPlayerConsume);
-
+    AddActionHandler(Wasteland::Action_PlayerEquip, Wasteland::OnPlayerEquip);
+    AddActionHandler(Wasteland::Action_PlayerUnequip, Wasteland::OnPlayerUnequip);
 
     zoom_ = 1.0f;
     menu_ = "";
@@ -469,6 +470,47 @@ void Wasteland::HandlePlayerInventory()
                     actions_.push(action);
             });
             
+            if(obj.GetParent()->GetType() == object_Weapon)
+            {
+                ObjectId equippedWeaponId = player_->GetEquippedItem(Slot_Weapon);
+                if(equippedWeaponId == obj.GetId())
+                {
+                    //Consume button
+                    auto btn = sfg::Button::Create();
+                    btn->SetLabel("Unequip");
+                    inventory_table->Attach(btn, pos, sfg::Table::FILL | sfg::Table::EXPAND, sfg::Table::FILL|sfg::Table::EXPAND, sf::Vector2f( 5.f, 5.f ) );
+                    ++pos.left;
+                    uint32_t id = obj.GetId();
+                    
+                    btn->GetSignal( sfg::Button::OnLeftClick ).Connect(
+                        [this, id] () {
+                            Action action;
+                            action.type = Action_PlayerUnequip;
+                            action.data = id;
+                            action.extra = Slot_Weapon;
+                            actions_.push(action);
+                    });
+                }
+                else
+                {
+                    //Consume button
+                    auto btn = sfg::Button::Create();
+                    btn->SetLabel("Equip");
+                    inventory_table->Attach(btn, pos, sfg::Table::FILL | sfg::Table::EXPAND, sfg::Table::FILL|sfg::Table::EXPAND, sf::Vector2f( 5.f, 5.f ) );
+                    ++pos.left;
+                    uint32_t id = obj.GetId();
+                    
+                    btn->GetSignal( sfg::Button::OnLeftClick ).Connect(
+                        [this, id] () {
+                            Action action;
+                            action.type = Action_PlayerEquip;
+                            action.data = id;
+                            action.extra = Slot_Weapon;
+                            actions_.push(action);
+                    });
+                }
+            }
+            
             if(obj.GetParent()->GetType() == object_Food)
             {
                 //Consume button
@@ -597,6 +639,17 @@ void Wasteland::OnPlayerConsume(const Action& action)
         player_->ChangeFood((int32_t)nutrition);
         player_->RemoveInventoryObject(id, 1);
     }
+}
+
+void Wasteland::OnPlayerEquip(const Action& action)
+{
+    player_->UnequipItem((EquipmentSlot)action.extra);
+    player_->EquipItem((EquipmentSlot)action.extra, action.data);
+}
+
+void Wasteland::OnPlayerUnequip(const Action& action)
+{
+    player_->UnequipItem((EquipmentSlot)action.extra);
 }
 
 void Wasteland::UpdateMap()
@@ -841,10 +894,10 @@ void Wasteland::LoadData(const std::string& filename)
             if(id>0 && sprite->value())
             {
                 CreateSprite(id, sprite->value(), sf::Vector2f(scale, scale));
-				if(sprite->first_attribute("name"))
-				{
-					Map::AddTileMapping(sprite->first_attribute("name")->value(), id);
-				}
+                if(sprite->first_attribute("name"))
+                {
+                    Map::AddTileMapping(sprite->first_attribute("name")->value(), id);
+                }
             }
             
             sprite = sprite->next_sibling("sprite");

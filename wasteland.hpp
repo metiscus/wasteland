@@ -69,7 +69,9 @@ private:
         Action_PlayerMove,
         Action_PlayerPickup,
         Action_PlayerDrop,
-        Action_PlayerConsume
+        Action_PlayerConsume,
+        Action_PlayerEquip,
+        Action_PlayerUnequip,
     };
     
     struct Action
@@ -108,6 +110,8 @@ private:
     void OnPlayerPickup(const Action& action);
     void OnPlayerMove(const Action& action);
     void OnPlayerConsume(const Action& action);
+    void OnPlayerEquip(const Action& action);
+    void OnPlayerUnequip(const Action& action);
 };
 
 #endif
