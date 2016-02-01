@@ -3,6 +3,7 @@
 #include <cmath>
 #include <random>
 #include "map.hpp"
+#include <SFML/Graphics.hpp>
 
 LevelGen::LevelGen()
     : map_(new Map())
@@ -54,28 +55,44 @@ void LevelGen::Generate(uint32_t seed, uint32_t width, uint32_t height)
         map_->AddCharacter(dog);
     }
     
-    std::uniform_int_distribution<uint32_t> house(std::min(15U, box), box);
+    std::uniform_int_distribution<uint32_t> rng_house(std::min(15U, box), box);
     std::uniform_int_distribution<uint32_t> house_size(7, 15);
     std::uniform_int_distribution<uint32_t> house_item(0, 100);
+    
+    std::list<sf::Rect<uint32_t> > houses;
     // Generate a few houses
     for(int ii=0; ii<5; ++ii)
     {
-        uint32_t x = house(generator);
-        uint32_t y = house(generator);
-        uint32_t hwidth = house_size(generator);
-        uint32_t hheight = house_size(generator);
-        HLine(x, y, hwidth, tile_Wall);
-        HLine(x, y + hheight - 1, hwidth, tile_Wall);
-        VLine(x, y, hheight, tile_Wall);
-        VLine(x + hwidth-1, y, hheight, tile_Wall);
-        
-        map_->Get(x, y + hheight /2).SetFromType(tile_Ground);
-        
-        for(uint32_t yy=1; yy<hheight-1; ++yy)
+        bool valid = true;
+
+        sf::Rect<uint32_t> house;
+        do
         {
-            for(uint32_t xx=1; xx<hwidth-1; ++xx)
+            house = sf::Rect<uint32_t>(rng_house(generator), rng_house(generator), house_size(generator), house_size(generator));
+            for(auto itr=houses.begin(); itr !=houses.end(); ++itr)
             {
-                auto& tile = map_->Get(x + xx, y+yy);
+                if(itr->intersects(house))
+                {
+                    valid = false;
+                    break;
+                }
+            }
+        } while(!valid);
+        
+        houses.push_front(house);
+
+        HLine(house.left, house.top, house.width, tile_Wall);
+        HLine(house.left, house.top + house.height - 1, house.width, tile_Wall);
+        VLine(house.left, house.top, house.height, tile_Wall);
+        VLine(house.left + house.width-1, house.top, house.height, tile_Wall);
+        
+        map_->Get(house.left, house.top + house.height /2).SetFromType(tile_Ground);
+        
+        for(uint32_t yy=1; yy<house.height-1; ++yy)
+        {
+            for(uint32_t xx=1; xx<house.width-1; ++xx)
+            {
+                auto& tile = map_->Get(house.left + xx, house.top+yy);
                 tile.group = ii+1;
                 tile.sprite = Map::GetTileMapping("floor");
             }
@@ -86,12 +103,12 @@ void LevelGen::Generate(uint32_t seed, uint32_t width, uint32_t height)
             if(house_item(generator) < 50)
             {
                 auto instance = Object::CreateInstance(1, 1);
-                map_->Get(x + hwidth/2, y+hheight/2).objects.push_back(instance);
+                map_->Get(house.left + house.width/2, house.top+house.height/2).objects.push_back(instance);
             }
             else
             {
                 auto instance = Object::CreateInstance(3, 1);
-                map_->Get(x + hwidth/2, y+hheight/2).objects.push_back(instance);
+                map_->Get(house.left + house.width/2, house.top+house.height/2).objects.push_back(instance);
             }
         }
     }
