@@ -81,6 +81,10 @@ public:
     void SetFood(uint32_t food);
     void SetViewRange(uint32_t range);
     void ChangeFood(int32_t food);
+    void ChangeHealth(int32_t health);
+    
+    uint32_t ComputeAttackRoll(bool melee = true);
+    uint32_t ComputeDamageRoll(bool melee = true);
 
     bool AddInventoryObject(Object::Instance object);
     std::vector<Object::Instance> GetInventory();

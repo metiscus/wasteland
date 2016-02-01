@@ -383,6 +383,25 @@ void Map::RemoveCharacter(CharacterPtr ptr)
     characters_.erase(std::remove(characters_.begin(), characters_.end(), ptr), characters_.end());
 }
 
+CharacterPtr Map::GetCharacter(uint32_t x, uint32_t y)
+{
+    CharacterPtr ret;
+    
+    if(OnMap(x,y))
+    {
+        for(auto chr : characters_)
+        {
+            if(chr->GetPosition() == sf::Vector2f(x,y))
+            {
+                ret = chr;
+                break;
+            }
+        }
+    }
+    
+    return ret;
+}
+
 void Map::Resize(uint32_t x, uint32_t y)
 {
     tiles_.resize(x*y);

@@ -63,11 +63,12 @@ void LevelGen::Generate(uint32_t seed, uint32_t width, uint32_t height)
     // Generate a few houses
     for(int ii=0; ii<5; ++ii)
     {
-        bool valid = true;
+        bool valid;
 
         sf::Rect<uint32_t> house;
         do
         {
+            valid = true;
             house = sf::Rect<uint32_t>(rng_house(generator), rng_house(generator), house_size(generator), house_size(generator));
             for(auto itr=houses.begin(); itr !=houses.end(); ++itr)
             {
@@ -77,6 +78,7 @@ void LevelGen::Generate(uint32_t seed, uint32_t width, uint32_t height)
                     break;
                 }
             }
+
         } while(!valid);
         
         houses.push_front(house);

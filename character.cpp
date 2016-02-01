@@ -2,6 +2,8 @@
 #include <cassert>
 #include <iostream>
 #include <algorithm>
+#include <random>
+#include "object.hpp"
 
 static const uint32_t MaxInventoryWeightPerStrength = 10;
 
@@ -16,6 +18,11 @@ Character::Character()
     inventory_weight_ = 0;
     facing_ = sf::Vector2f(0., 1.);
     view_range_ = 10;
+
+    for(auto &slot : equipement_)
+    {
+        slot = 0;
+    }
 
     traits_.is_player = 0;
     traits_.intelligent = 1;
@@ -127,6 +134,27 @@ void Character::SetSpriteId(uint32_t id)
 void Character::ChangeFood(int32_t food)
 {
     food_ += food;
+}
+
+void Character::ChangeHealth(int32_t health)
+{
+    std::cerr<<"Health: "<<health_<<"/"<<max_health_<<"\n";
+    int32_t my_health = health_;
+    my_health += health;
+
+    if(my_health > (int32_t)max_health_)
+    {
+        health_ = max_health_;
+    }
+    else if(my_health <= 0)
+    {
+        health_ = 0;
+    }
+    else
+    {
+        health_ = my_health;
+    }
+    std::cerr<<"Health2: "<<health_<<"/"<<max_health_<<"\n";
 }
 
 bool Character::AddInventoryObject(Object::Instance objecti)
@@ -258,4 +286,54 @@ void Character::UnequipItem(EquipmentSlot slot)
 ObjectId Character::GetEquippedItem(EquipmentSlot slot)
 {
     return equipement_[slot];
+}
+
+uint32_t Character::ComputeAttackRoll(bool melee)
+{
+    uint32_t attack = strength_;
+    ObjectId weapon_id = 0;
+    weapon_id = GetEquippedItem(Slot_Weapon);
+
+    if(melee && weapon_id != 0)
+    {
+        auto weapon = Object::GetObject(weapon_id);
+        attack += weapon->GetProperty("melee");
+    }
+    else if(weapon_id != 0)
+    {
+        auto weapon = Object::GetObject(weapon_id);
+        attack += weapon->GetProperty("attack");
+    }
+    
+    // Seed for rolls
+    std::random_device rd;
+    std::default_random_engine generator(rd());
+    std::uniform_int_distribution<uint32_t> house_item(0, 20);
+    
+    return attack + house_item(generator);
+}
+
+uint32_t Character::ComputeDamageRoll(bool melee)
+{
+    uint32_t attack = strength_;
+    ObjectId weapon_id = 0;
+    weapon_id = GetEquippedItem(Slot_Weapon);
+
+    if(melee && weapon_id != 0)
+    {
+        auto weapon = Object::GetObject(weapon_id);
+        attack += weapon->GetProperty("melee");
+    }
+    else if(weapon_id != 0)
+    {
+        auto weapon = Object::GetObject(weapon_id);
+        attack += weapon->GetProperty("attack");
+    }
+    
+    // Seed for rolls
+    std::random_device rd;
+    std::default_random_engine generator(rd());
+    std::uniform_int_distribution<uint32_t> house_item(1, attack);
+    
+    return house_item(generator);
 }

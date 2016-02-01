@@ -85,6 +85,7 @@ public:
     
     void AddCharacter(CharacterPtr ptr);
     void RemoveCharacter(CharacterPtr ptr);
+    CharacterPtr GetCharacter(uint32_t x, uint32_t y);
 
     void Resize(uint32_t x, uint32_t y);
 };

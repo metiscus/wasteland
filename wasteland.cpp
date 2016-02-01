@@ -591,6 +591,28 @@ void Wasteland::OnPlayerMove(const Action& action)
     {
         move_to_pos = player_->GetPosition();
     }
+    else if(map_->IsOccupied(move_to_pos.x, move_to_pos.y))
+    {
+        // potentially perform a melee attack
+        uint32_t attack_roll = player_->ComputeAttackRoll(true);
+        if(attack_roll > 10)
+        {
+            uint32_t damage = player_->ComputeDamageRoll(true);
+            std::cerr<<"Player damaged enemy "<<damage<< " hps\n";
+            auto enemy = map_->GetCharacter(move_to_pos.x, move_to_pos.y);
+            enemy->ChangeHealth(-damage);
+            if(enemy->GetHealth() == 0)
+            {
+                std::cerr<<"Player killed enemy!\n";
+                map_->RemoveCharacter(enemy);
+            }
+        }
+        else
+        {
+            std::cerr<<"Player missed attack on enemy!\n";
+        }
+        move_to_pos = player_->GetPosition();
+    }
     else
     {
         tile.visited = true;
