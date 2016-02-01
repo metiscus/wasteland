@@ -696,7 +696,7 @@ void Wasteland::UpdateMap()
                         move_to.y = int(roundf(move_to.y));
 
                         // try to move
-                        if(map_->IsPassable(move_to.x, move_to.y))
+                        if(map_->IsPassable(move_to.x, move_to.y) && !map_->IsOccupied(move_to.x, move_to.y))
                         {
                             chr->SetPosition(move_to);
                             chr->SetFacing(sf::Vector2f(int(roundf(toPlayer.x)), int(roundf(toPlayer.y))));

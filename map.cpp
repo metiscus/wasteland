@@ -178,24 +178,39 @@ Map::~Map()
 
 bool Map::IsPassable(uint32_t x, uint32_t y) const
 {
+    bool ret = false;
     if(OnMap(x,y))
     {
         TileType type = tiles_[x+y*width_].type;
         switch(type)
         {
             case tile_Ground:
-                return true;
+                ret = true;
                 break;
             case tile_Empty:
             case tile_Invalid:
             case tile_Wall:
             case tile_Water:
-                return false;
+                ret = false;
                 break;
 
             default:
                 assert(false);
                 return false;
+        }
+    }
+    
+    return ret;
+}
+
+bool Map::IsOccupied(uint32_t x, uint32_t y) const
+{
+    if(OnMap(x,y))
+    {
+        for(auto chr : characters_)
+        {
+            if(chr->GetPosition() == sf::Vector2f(x,y))
+                return true;
         }
     }
     return false;

@@ -78,6 +78,7 @@ public:
     void SetRadiation(uint32_t x, uint32_t y, float radiation);
     
     bool IsPassable(uint32_t x, uint32_t y) const;
+    bool IsOccupied(uint32_t x, uint32_t y) const;
     bool IsOpaque(uint32_t x, uint32_t y) const;
 
     std::list<CharacterPtr>& GetCharacters();
