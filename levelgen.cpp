@@ -51,6 +51,8 @@ void LevelGen::Generate(uint32_t seed, uint32_t width, uint32_t height)
         dog->SetSpriteId(6);
         CharacterTraits traits;
         traits.beast = 1;
+        dog->SetMaxHealth(60);
+        dog->SetHealth(60);
         dog->SetTraits(traits);
         map_->AddCharacter(dog);
     }
