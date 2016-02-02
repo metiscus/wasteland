@@ -599,8 +599,8 @@ void Wasteland::OnPlayerMove(const Action& action)
                 auto drops = enemy->GetInventory();
                 for(auto &obj : drops)
                 {
-					tile.AddObject(obj.GetId(), obj.GetQuantity());
-				}
+                    tile.AddObject(obj.GetId(), obj.GetQuantity());
+                }
                 map_->RemoveCharacter(enemy);
             }
         }
