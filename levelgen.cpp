@@ -54,6 +54,13 @@ void LevelGen::Generate(uint32_t seed, uint32_t width, uint32_t height)
         dog->SetMaxHealth(60);
         dog->SetHealth(60);
         dog->SetTraits(traits);
+        
+        if(tile(generator) % 2 == 0)
+        {
+			//Dogs can "carry" some meat to drop
+			Object::Instance meat = Object::CreateInstance(6, 1);
+			dog->AddInventoryObject(meat);
+		}
         map_->AddCharacter(dog);
     }
     

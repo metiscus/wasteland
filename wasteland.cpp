@@ -75,22 +75,9 @@ Wasteland::Wasteland(const std::string& datafile)
     }
     else
     {
-        CreateSprite(1, "data/grass.png", sf::Vector2f(0.5, 0.5));
-        CreateSprite(2, "data/walls.png", sf::Vector2f(0.5, 0.5));
-        CreateSprite(3, "data/person.png", sf::Vector2f(0.5, 0.5));
-        CreateSprite(4, "data/combat_knife.png", sf::Vector2f(0.5, 0.5));
-        CreateSprite(5, "data/45_pistol.png", sf::Vector2f(0.5, 0.5));
-        CreateSprite(6, "data/wild_dog.png", sf::Vector2f(0.5, 0.5f));
-
-        player_->SetSpriteId(3);
-
-        font_.loadFromFile("data/font.ttf");
-    
-        Object::BuildFromString(std::string("1,3,10,4,Combat Knife,melee,5"));
-        Object::BuildFromString(std::string("2,1,10,0,Ration,nutrition,500"));
-        Object::BuildFromString(std::string("3,3,18,5,.45 Pistol,melee,1,attack,15,range,80,ammo_cap,8,ammo_type,45"));
-        Object::BuildFromString(std::string("4,3,18,0,Teeth,melee,3"));
-    }
+		std::cerr<<"wasteland.xml is missing.\n";
+		abort();
+	}
     
     view_.setCenter(player_->GetPosition() * 32.0f);
     window_->setView(view_);
@@ -604,6 +591,11 @@ void Wasteland::OnPlayerMove(const Action& action)
             if(enemy->GetHealth() == 0)
             {
                 std::cerr<<"Player killed enemy!\n";
+                auto drops = enemy->GetInventory();
+                for(auto &obj : drops)
+                {
+					tile.AddObject(obj.GetId(), obj.GetQuantity());
+				}
                 map_->RemoveCharacter(enemy);
             }
         }
