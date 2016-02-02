@@ -88,6 +88,7 @@ private:
     std::map<enum ActionType, ActionHandler> action_handlers_;
     
     sf::Music music_;
+    sf::Music effect_;
     
 public:
     explicit Wasteland(const std::string& datafile = "");

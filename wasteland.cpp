@@ -91,6 +91,7 @@ Wasteland::Wasteland(const std::string& datafile)
     
     music_.openFromFile("data/theme.ogg");
     music_.play();
+    effect_.openFromFile("data/melee.ogg");
 }
 
 void Wasteland::CreateSprite(uint32_t id, const std::string& filename, const sf::Vector2f& scale)
@@ -587,6 +588,7 @@ void Wasteland::OnPlayerMove(const Action& action)
         uint32_t attack_roll = player_->ComputeAttackRoll(true);
         if(attack_roll > 10)
         {
+            effect_.play();
             uint32_t damage = player_->ComputeDamageRoll(true);
             std::cerr<<"Player damaged enemy "<<damage<< " hps\n";
             auto enemy = map_->GetCharacter(move_to_pos.x, move_to_pos.y);
