@@ -88,6 +88,9 @@ Wasteland::Wasteland(const std::string& datafile)
     inventory_ = sfg::Box::Create(sfg::Box::Orientation::VERTICAL, 5.f);
     equipment_->Add(inventory_);
     desktop_.Add(equipment_);
+    
+    music_.openFromFile("data/theme.ogg");
+    music_.play();
 }
 
 void Wasteland::CreateSprite(uint32_t id, const std::string& filename, const sf::Vector2f& scale)

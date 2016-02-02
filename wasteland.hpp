@@ -4,6 +4,7 @@
 #include "map.hpp"
 #include "levelgen.hpp"
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <functional>
 #include <string>
 #include <unordered_map>
@@ -85,6 +86,8 @@ private:
     std::queue<Action> actions_;
     typedef std::function<void(const Action&)> ActionHandler;
     std::map<enum ActionType, ActionHandler> action_handlers_;
+    
+    sf::Music music_;
     
 public:
     explicit Wasteland(const std::string& datafile = "");

@@ -7,7 +7,7 @@ LDFLAGS=-fsanitize=address
 .POSIX:
 
 RAPIDXML_FLAGS:= -Iextern/rapidxml-1.13
-SFML_LDFLAGS:=-lsfml-system -lsfml-window -lsfml-graphics -lsfgui
+SFML_LDFLAGS:=-lsfml-system -lsfml-window -lsfml-graphics -lsfml-audio -lsfgui
 
 CXXFLAGS += $(RAPIDXML_FLAGS)
 LDFLAGS += $(SFML_LDFLAGS)
