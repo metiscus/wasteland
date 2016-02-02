@@ -75,9 +75,9 @@ Wasteland::Wasteland(const std::string& datafile)
     }
     else
     {
-		std::cerr<<"wasteland.xml is missing.\n";
-		abort();
-	}
+        std::cerr<<"wasteland.xml is missing.\n";
+        abort();
+    }
     
     view_.setCenter(player_->GetPosition() * 32.0f);
     window_->setView(view_);
@@ -92,6 +92,7 @@ Wasteland::Wasteland(const std::string& datafile)
     music_.openFromFile("data/theme.ogg");
     music_.play();
     effect_.openFromFile("data/melee.ogg");
+    effect2_.openFromFile("data/dogbark.ogg");
 }
 
 void Wasteland::CreateSprite(uint32_t id, const std::string& filename, const sf::Vector2f& scale)
@@ -588,6 +589,7 @@ void Wasteland::OnPlayerMove(const Action& action)
         uint32_t attack_roll = player_->ComputeAttackRoll(true);
         if(attack_roll > 10)
         {
+            bool enemy_killed = false;
             effect_.play();
             uint32_t damage = player_->ComputeDamageRoll(true);
             std::cerr<<"Player damaged enemy "<<damage<< " hps\n";
@@ -601,7 +603,30 @@ void Wasteland::OnPlayerMove(const Action& action)
                 {
                     tile.AddObject(obj.GetId(), obj.GetQuantity());
                 }
+                enemy_killed = true;
                 map_->RemoveCharacter(enemy);
+            }
+            else
+            {
+                auto traits = enemy->GetTraits();
+                traits.aggro = 1;
+                enemy->SetTraits(traits);
+            }
+            
+            if(!enemy_killed && enemy->GetTraits().aggro)
+            {
+                attack_roll = enemy->ComputeAttackRoll(true);
+                if(attack_roll > 10)
+                {
+                    effect2_.play();
+                    damage = enemy->ComputeDamageRoll(true);
+                    std::cerr<<"Enemy damaged player "<<damage<< " hps\n";
+                    player_->ChangeHealth(-damage);
+                    if(player_->GetHealth() == 0)
+                    {
+                        std::cerr<<"Enemy killed player!\n";
+                    }
+                }
             }
         }
         else

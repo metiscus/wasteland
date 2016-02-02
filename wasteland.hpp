@@ -89,6 +89,7 @@ private:
     
     sf::Music music_;
     sf::Music effect_;
+    sf::Music effect2_;
     
 public:
     explicit Wasteland(const std::string& datafile = "");
