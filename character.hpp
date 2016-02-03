@@ -18,7 +18,8 @@ struct CharacterTraits
     uint64_t needs_food : 1;
     uint64_t can_swim : 1;
     uint64_t beast : 1;
-    uint64_t padding : 59;
+	uint64_t aggro : 1;
+    uint64_t padding : 58;
 };
 
 class Character;
