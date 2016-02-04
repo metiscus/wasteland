@@ -324,7 +324,7 @@ void Wasteland::Draw()
                     {
                         sprite->setColor(sf::Color(255,255,255));
                     }
-                    //window_->draw(*sprites_[(uint32_t)tile.type]);
+
                     window_->draw(*sprite);
 
                     //TODO: improve this
