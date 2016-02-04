@@ -152,6 +152,7 @@ void Wasteland::ProcessInput()
         if (event.type == sf::Event::KeyPressed)
         {
             // currently i'm unable to cleanly implement commands that arent part of the console
+            // Need to have a queue of these and allow handlers to take them off the queue and process them.
             if(console_)
             {
                 //TODO: do this better
