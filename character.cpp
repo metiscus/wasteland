@@ -304,12 +304,12 @@ uint32_t Character::ComputeAttackRoll(bool melee)
         auto weapon = Object::GetObject(weapon_id);
         attack += weapon->GetProperty("attack");
     }
-    
+
     // Seed for rolls
     std::random_device rd;
     std::default_random_engine generator(rd());
     std::uniform_int_distribution<uint32_t> house_item(0, 20);
-    
+
     return attack + house_item(generator);
 }
 
@@ -329,11 +329,11 @@ uint32_t Character::ComputeDamageRoll(bool melee)
         auto weapon = Object::GetObject(weapon_id);
         attack += weapon->GetProperty("attack");
     }
-    
+
     // Seed for rolls
     std::random_device rd;
     std::default_random_engine generator(rd());
-    std::uniform_int_distribution<uint32_t> house_item(1, attack);
-    
-    return house_item(generator);
+    std::uniform_int_distribution<uint32_t> attack_rng(1, attack);
+
+    return attack_rng(generator);
 }
